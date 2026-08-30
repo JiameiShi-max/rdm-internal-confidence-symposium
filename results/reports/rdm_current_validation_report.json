@@ -1,0 +1,62 @@
+{
+  "single_model_rows": [
+    {
+      "model": "original_single_seed",
+      "summary_path": "/Users/apple/Desktop/decision making/2026-06-targeted-dr-stage1/stage9_internal_readout_50k_auto_summary.json",
+      "dataset": "stage9_internal_teacher_dataset_50k_auto.npz",
+      "n_trials": 400,
+      "n_sure_offered": 321,
+      "n_sure_choice": 185,
+      "sure_offered_rate": 0.8025,
+      "sure_choice_rate_offered": 0.5763239875389408,
+      "residual_corr": 0.7184185447598422,
+      "residual_r2": 0.5161252054548493,
+      "evidence_r2_p_sure": 0.2776717197929799,
+      "pre_ts_corr": 0.4573545369393164,
+      "deterministic_stability": 1.0,
+      "population_pre_event_diff": 0.04501357892180112,
+      "population_post_event_diff": 0.12418883974229922,
+      "population_peak_abs_diff": 0.1968481418990383
+    },
+    {
+      "model": "timed_single_seed",
+      "summary_path": "/Users/apple/Desktop/decision making/2026-06-targeted-dr-stage1/stage9b_timed_readout_50k_fixed_auto_summary.json",
+      "dataset": "stage9b_timed_teacher_dataset_50k_fixed_auto.npz",
+      "n_trials": 400,
+      "n_sure_offered": 198,
+      "n_sure_choice": 100,
+      "sure_offered_rate": 0.495,
+      "sure_choice_rate_offered": 0.5050505050505051,
+      "residual_corr": 0.5334311181901117,
+      "residual_r2": 0.28454875785355294,
+      "evidence_r2_p_sure": 0.4731943203840736,
+      "pre_ts_corr": 0.3064596771306219,
+      "deterministic_stability": 1.0,
+      "population_pre_event_diff": 0.028913278170862727,
+      "population_post_event_diff": 0.020556540878154776,
+      "population_peak_abs_diff": 0.06114118566582663
+    }
+  ],
+  "multiseed_rows": [
+    {
+      "model": "timed_5seed",
+      "aggregate_path": "/Users/apple/Desktop/decision making/2026-06-targeted-dr-stage1/multiseed_validation_timed_5seed/multiseed_validation_summary.json",
+      "n_seeds": 5,
+      "pass": false,
+      "n_sure_choice_mean": 116.4,
+      "n_sure_choice_std": 15.614096195425466,
+      "residual_corr_mean": 0.599269215772259,
+      "residual_corr_std": 0.04897494594000465,
+      "residual_corr_min": 0.5314586483252182,
+      "residual_corr_max": 0.6590544696962352,
+      "residual_r2_mean": 0.3610424292361594,
+      "residual_r2_std": 0.05827660504793794,
+      "evidence_r2_p_sure_mean": 0.45052143771737374,
+      "evidence_r2_p_sure_std": 0.056178518137473044,
+      "pre_ts_corr_mean": 0.2976359548911769,
+      "pre_ts_corr_std": 0.1672755134846838,
+      "pre_ts_corr_max": 0.5668530452790151,
+      "deterministic_stability_min": 1.0
+    }
+  ]
+}

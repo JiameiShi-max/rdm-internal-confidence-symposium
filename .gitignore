@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+*.out
+slurm-*.out
+stage9b_timed_teacher_dataset_50k_auto.npz
