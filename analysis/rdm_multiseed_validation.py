@@ -24,6 +24,19 @@ def default_validation_metrics():
         "deterministic_repeated.all_repeats_same_choice_fraction",
         "deterministic_repeated.max_output_abs_diff",
         "deterministic_repeated.max_state_abs_diff",
+        "behavior.overall_p_sure",
+        "behavior.no_sure_accuracy",
+        "behavior.waived_sure_accuracy",
+        "repeated.n_stimuli_with_choice_variability",
+        "repeated.within_stimulus_pre_ts_margin_logit_coefficient",
+        "repeated.within_stimulus_pre_ts_hidden_pc1_logit_coefficient",
+        "sure_output.mean_pre_ts_sure_output",
+        "sure_output.pre_ts_offered_minus_unoffered",
+        "sure_output.post_ts_future_sure_minus_waived",
+        "teacher_calibration.proxy_metrics.brier_score",
+        "teacher_calibration.proxy_metrics.log_loss",
+        "teacher_calibration.calibration_slope",
+        "matched.waived_minus_matched_no_sure_accuracy",
         "population_dynamics.sure_axis_pre_event_mean_difference",
         "population_dynamics.sure_axis_post_event_mean_difference",
         "population_dynamics.sure_axis_peak_abs_difference",
@@ -65,13 +78,15 @@ def aggregate_seed_summaries(
     min_residual_corr=0.45,
     max_pre_ts_corr=0.35,
     min_deterministic_stability=0.999,
+    required_finite_metrics=None,
 ):
     metrics = list(default_validation_metrics() if metrics is None else metrics)
-    required_finite_metrics = [
-        "corr_sure_axis_with_sure_residual_after_evidence",
-        "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice",
-        "deterministic_repeated.all_repeats_same_choice_fraction",
-    ]
+    if required_finite_metrics is None:
+        required_finite_metrics = [
+            "corr_sure_axis_with_sure_residual_after_evidence",
+            "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice",
+            "deterministic_repeated.all_repeats_same_choice_fraction",
+        ]
     per_seed = []
     for item in summaries:
         row = {"seed": int(item["seed"])}
@@ -165,7 +180,7 @@ def load_json_if_exists(path):
         return json.load(f)
 
 
-def load_seed_outputs(summary_path):
+def load_seed_outputs(summary_path, teacher_calibration_path=None, matched_path=None):
     with open(summary_path, encoding="utf-8") as f:
         summary = json.load(f)
     root, _ = os.path.splitext(summary_path)
@@ -173,7 +188,16 @@ def load_seed_outputs(summary_path):
     summary["deterministic_repeated"] = load_json_if_exists(
         f"{root}_deterministic_repeated_stimulus_summary.json"
     )
+    summary["repeated"] = load_json_if_exists(
+        f"{root}_repeated_stimulus_summary.json"
+    )
+    summary["behavior"] = load_json_if_exists(f"{root}_behavior.json")
+    summary["sure_output"] = load_json_if_exists(
+        f"{root}_sure_output_dynamics_summary.json"
+    )
     summary["population_dynamics"] = load_json_if_exists(f"{root}_population_dynamics_summary.json")
+    summary["teacher_calibration"] = load_json_if_exists(teacher_calibration_path) if teacher_calibration_path else {}
+    summary["matched"] = load_json_if_exists(matched_path) if matched_path else {}
     return summary
 
 
@@ -211,7 +235,21 @@ def run_seed(model_name, seed, output_dir, args):
         str(int(args.population_post_window)),
     ]
     run_student(argv)
-    loaded = load_seed_outputs(summary_path)
+    calibration_path = (
+        args.teacher_calibration_template.format(seed=int(seed))
+        if args.teacher_calibration_template
+        else None
+    )
+    matched_path = (
+        args.matched_template.format(seed=int(seed))
+        if args.matched_template
+        else None
+    )
+    loaded = load_seed_outputs(
+        summary_path,
+        teacher_calibration_path=calibration_path,
+        matched_path=matched_path,
+    )
     loaded["seed"] = int(seed)
     loaded["model_name"] = model_name
     loaded["summary_path"] = os.path.abspath(summary_path)
@@ -239,6 +277,16 @@ def build_arg_parser():
     parser.add_argument("--max-pre-ts-corr", type=float, default=0.35)
     parser.add_argument("--min-deterministic-stability", type=float, default=0.999)
     parser.add_argument("--aggregate-only", action="store_true")
+    parser.add_argument(
+        "--teacher-calibration-template",
+        default=None,
+        help="Optional path template containing {seed} for per-seed teacher calibration JSON.",
+    )
+    parser.add_argument(
+        "--matched-template",
+        default=None,
+        help="Optional path template containing {seed} for per-seed matched-control JSON.",
+    )
     return parser
 
 
@@ -251,7 +299,21 @@ def main(argv=None):
     for seed in seeds:
         summary_path = build_seed_summary_path(args.output_dir, args.model, seed)
         if args.aggregate_only:
-            loaded = load_seed_outputs(summary_path)
+            calibration_path = (
+                args.teacher_calibration_template.format(seed=int(seed))
+                if args.teacher_calibration_template
+                else None
+            )
+            matched_path = (
+                args.matched_template.format(seed=int(seed))
+                if args.matched_template
+                else None
+            )
+            loaded = load_seed_outputs(
+                summary_path,
+                teacher_calibration_path=calibration_path,
+                matched_path=matched_path,
+            )
             loaded["seed"] = int(seed)
             loaded["model_name"] = args.model
             loaded["summary_path"] = os.path.abspath(summary_path)
@@ -264,6 +326,22 @@ def main(argv=None):
         min_residual_corr=args.min_residual_corr,
         max_pre_ts_corr=args.max_pre_ts_corr,
         min_deterministic_stability=args.min_deterministic_stability,
+        required_finite_metrics=(
+            [
+                "corr_sure_axis_with_sure_residual_after_evidence",
+                "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice",
+                "deterministic_repeated.all_repeats_same_choice_fraction",
+                "repeated.within_stimulus_pre_ts_margin_logit_coefficient",
+                "repeated.within_stimulus_pre_ts_hidden_pc1_logit_coefficient",
+                "sure_output.pre_ts_offered_minus_unoffered",
+                "sure_output.post_ts_future_sure_minus_waived",
+                "teacher_calibration.proxy_metrics.brier_score",
+                "teacher_calibration.proxy_metrics.log_loss",
+                "matched.waived_minus_matched_no_sure_accuracy",
+            ]
+            if args.teacher_calibration_template and args.matched_template
+            else None
+        ),
     )
     paths = write_aggregate_outputs(args.output_dir, aggregate)
     print(json.dumps({"outputs": paths, "aggregate": aggregate}, indent=2), flush=True)

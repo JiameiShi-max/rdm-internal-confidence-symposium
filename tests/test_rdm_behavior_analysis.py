@@ -23,6 +23,32 @@ def make_records():
     return build_trial_eval_records(trial_info, choices)
 
 
+def test_behavior_records_and_summary_include_timing_and_duration_analysis():
+    trial_info = []
+    choices = []
+    for idx in range(20):
+        trial_info.append({
+            "coh": 0.032 if idx < 10 else 0.256,
+            "dir_choice": idx % 2,
+            "sure_available": True,
+            "stimulus_dur": 400 + 40 * idx,
+            "delay_dur": 900,
+            "ts_delay": 500 + 10 * (idx % 5),
+            "ts_onset": 100,
+            "delay_end": 180,
+            "dt_ms": 10,
+        })
+        choices.append(3 if idx % 3 == 0 else (1 if idx % 2 == 0 else 2))
+    records = build_trial_eval_records(trial_info, choices)
+    summary = summarize_behavior(records)
+
+    assert records[0]["stimulus_duration_ms"] == 400
+    assert records[0]["ts_latency_from_motion_offset_ms"] == 500
+    assert summary["duration"]
+    assert summary["coherence_x_duration"]
+    assert summary["sure_logistic"]["available"] is True
+
+
 def test_behavior_summary_defines_psure_no_sure_and_waived_sure_accuracy():
     summary = summarize_behavior(make_records())
 
@@ -69,6 +95,7 @@ def main():
     test_behavior_summary_defines_psure_no_sure_and_waived_sure_accuracy()
     test_behavior_writers_create_csv_json_and_plot()
     test_default_behavior_paths_derive_from_summary_path()
+    test_behavior_records_and_summary_include_timing_and_duration_analysis()
     print("rdm behavior analysis test passed")
 
 

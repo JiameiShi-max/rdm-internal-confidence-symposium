@@ -152,8 +152,9 @@ def test_build_matched_controls_matches_within_coherence_by_evidence():
         assert len(controls["offered_to_no_sure_matches"]) == 4
         first = controls["offered_to_no_sure_matches"][0]
         assert first["offered_trial_index"] == 0
-        assert first["matched_no_sure_trial_index"] == 2
-        assert abs(first["match_delta"] - 0.01) < 1e-12
+        assert first["matched_no_sure_trial_index"] == 3
+        assert abs(first["match_delta"] - 0.40) < 1e-12
+        assert len({row["matched_no_sure_trial_index"] for row in controls["offered_to_no_sure_matches"]}) == 4
         assert len(controls["sure_to_waived_matches"]) == 2
         assert controls["sure_to_waived_matches"][0]["sure_axis_delta_sure_minus_waived"] > 0
 
@@ -197,11 +198,32 @@ def test_compute_delta_inference_returns_ci_and_permutation_p_value():
     assert 0.0 <= inference["permutation_p_two_sided"] <= 1.0
 
 
+def test_outputs_allow_no_sure_choice_axis_summary():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        summary = {
+            "coherence_summary": [],
+            "match_key": "evidence_axis",
+            "waived_accuracy": 0.75,
+            "matched_no_sure_accuracy_for_waived": 0.70,
+            "mean_sure_axis_sure_choice": None,
+            "mean_sure_axis_waived": 0.1,
+        }
+        controls = {
+            "offered_to_no_sure_matches": [],
+            "sure_to_waived_matches": [],
+        }
+
+        paths = write_matched_control_outputs(tmp_dir, tmp_dir, summary, controls)
+
+        assert os.path.getsize(paths["figure"]) > 0
+
+
 def main():
     test_load_trial_records_casts_booleans_and_floats()
     test_build_matched_controls_matches_within_coherence_by_evidence()
     test_summary_and_outputs_include_required_controls()
     test_compute_delta_inference_returns_ci_and_permutation_p_value()
+    test_outputs_allow_no_sure_choice_axis_summary()
     print("rdm matched trial controls test passed")
 
 

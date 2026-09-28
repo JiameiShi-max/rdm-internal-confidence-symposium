@@ -10,6 +10,7 @@ from rdm_teacher_calibration_report import (
     load_teacher_dataset,
     summarize_teacher_calibration,
     write_teacher_calibration_outputs,
+    compare_confidence_models,
 )
 
 
@@ -112,10 +113,25 @@ def test_summary_and_outputs_include_proxy_boundary_and_files():
         assert rows[0]["bin_index"] == "0"
 
 
+def test_empirical_model_comparison_detects_duration_information():
+    rng = np.random.RandomState(4)
+    n = 300
+    margin = rng.normal(size=n)
+    duration_ms = rng.choice([400.0, 800.0, 1200.0], size=n)
+    probability = 1.0 / (1.0 + np.exp(-(-0.4 + margin + 1.8 * duration_ms / 1000.0)))
+    correct = rng.random(n) < probability
+
+    result = compare_confidence_models(margin, duration_ms, correct, n_folds=5, seed=3)
+
+    assert result["margin_duration"]["log_loss"] < result["margin"]["log_loss"]
+    assert result["decision"]["duration_adds_meaningful_information"] is True
+
+
 def main():
     test_load_teacher_dataset_extracts_required_vectors()
     test_build_calibration_bins_orders_margin_and_averages_targets()
     test_summary_and_outputs_include_proxy_boundary_and_files()
+    test_empirical_model_comparison_detects_duration_information()
     print("rdm teacher calibration report test passed")
 
 

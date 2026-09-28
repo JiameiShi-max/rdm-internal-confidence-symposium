@@ -29,6 +29,10 @@ DEFAULT_ARGS = [
     '1200',
     '--ts-delay',
     '500',
+    '--ts-latency-min',
+    '500',
+    '--ts-latency-max',
+    '750',
     '--min-post-ts',
     '100',
     '--min-response-dur',
@@ -40,9 +44,9 @@ DEFAULT_ARGS = [
     '--internal-pre-go-offset-steps',
     '5',
     '--output',
-    'data/timed_internal_teacher_dataset_fixed_50k.npz',
+    'data/model_freeze/timed_teacher_variable_ts_seed7.npz',
     '--summary',
-    'results/reports/timed_teacher_dataset_summary.json',
+    'results/model_freeze/teacher_seed7_summary.json',
 ]
 
 

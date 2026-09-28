@@ -2,7 +2,10 @@ import csv
 import json
 import os
 
+import matplotlib
 import numpy as np
+
+matplotlib.use("Agg")
 
 
 def finite_xy(x, y):
@@ -122,6 +125,15 @@ def pre_ts_leakage_paths(summary_path):
     }
 
 
+def sure_output_dynamics_paths(summary_path):
+    root, _ = os.path.splitext(summary_path)
+    return {
+        "summary": f"{root}_sure_output_dynamics_summary.json",
+        "trials": f"{root}_sure_output_dynamics_trials.csv",
+        "fig": f"{root}_sure_output_dynamics.png",
+    }
+
+
 def deterministic_repeated_stimulus_paths(summary_path):
     root, _ = os.path.splitext(summary_path)
     return {
@@ -171,13 +183,25 @@ def simulator_test(model, batch_x, rec_noise=0.0):
     return simulator.run_trials(np.asarray(batch_x, dtype=np.float32))
 
 
-def _readout_choice(outputs_trial, delay_end, window):
+def _readout_choice(outputs_trial, delay_end, window, action_only=False):
     start = int(delay_end)
     end = min(outputs_trial.shape[0], start + int(window))
     if end <= start:
         end = min(outputs_trial.shape[0], start + 1)
     avg = outputs_trial[start:end].mean(axis=0)
+    if action_only:
+        return int(1 + np.argmax(avg[1:4])), avg
     return int(np.argmax(avg)), avg
+
+
+def softmax_action_outputs(outputs):
+    """Return a copy with LEFT/RIGHT/SURE logits normalized per time step."""
+    normalized = np.asarray(outputs, dtype=float).copy()
+    logits = normalized[..., 1:4]
+    shifted = logits - np.max(logits, axis=-1, keepdims=True)
+    exp_logits = np.exp(shifted)
+    normalized[..., 1:4] = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
+    return normalized
 
 
 def _confidence_near_ts(outputs_trial, trial_meta, half_window):
@@ -190,6 +214,37 @@ def _confidence_near_ts(outputs_trial, trial_meta, half_window):
     return float(abs(avg[1] - avg[2]))
 
 
+def select_repeated_stimuli(task, n_stimuli):
+    """Prefer offered, boundary-near stimuli spanning coherence and duration."""
+    n_stimuli = min(int(n_stimuli), int(task.x_data.shape[0]))
+    candidates = []
+    for idx, info in enumerate(task.source_trial_info):
+        if not bool(info.get("sure_available", False)):
+            continue
+        strength = float(info.get("teacher_sure_strength", info.get("sure_strength", 0.5)))
+        duration = float(info.get("stimulus_dur", info.get("stimulus_duration", np.nan)))
+        candidates.append((idx, float(info.get("coh", np.nan)), duration, abs(strength - 0.5)))
+    candidates.sort(key=lambda item: item[3])
+    chosen = []
+    represented = set()
+    for idx, coh, duration, _ in candidates:
+        key = (coh, duration)
+        if key not in represented:
+            chosen.append(idx)
+            represented.add(key)
+        if len(chosen) >= n_stimuli:
+            break
+    if len(chosen) < n_stimuli:
+        for idx, _, _, _ in candidates:
+            if idx not in chosen:
+                chosen.append(idx)
+            if len(chosen) >= n_stimuli:
+                break
+    if len(chosen) < n_stimuli:
+        chosen.extend(idx for idx in range(task.x_data.shape[0]) if idx not in chosen)
+    return np.asarray(chosen[:n_stimuli], dtype=int)
+
+
 def collect_repeated_stimulus_evaluation(
     model,
     task,
@@ -199,30 +254,47 @@ def collect_repeated_stimulus_evaluation(
     ts_half_window=5,
     deterministic=False,
     rec_noise=0.0,
+    action_only=False,
+    action_softmax=False,
 ):
     n_stimuli = min(int(n_stimuli), int(task.x_data.shape[0]))
     n_repeats = int(n_repeats)
-    dataset_indices = np.arange(n_stimuli, dtype=int)
+    dataset_indices = select_repeated_stimuli(task, n_stimuli)
     repeated_indices = np.repeat(dataset_indices, n_repeats)
     batch_x = task.x_data[repeated_indices]
     if deterministic:
         outputs, states = simulator_test(model, batch_x, rec_noise=rec_noise)
     else:
         outputs, states = model_test_with_fixed_batch(model, task, batch_x)
+    if action_softmax:
+        outputs = softmax_action_outputs(outputs)
 
     records = []
     for row_idx, dataset_index in enumerate(repeated_indices):
         info = dict(task.source_trial_info[int(dataset_index)])
-        choice, avg = _readout_choice(outputs[row_idx], info["delay_end"], readout_window)
+        choice, avg = _readout_choice(
+            outputs[row_idx],
+            info["delay_end"],
+            readout_window,
+            action_only=action_only,
+        )
+        pre_ts_step = max(0, int(info.get("ts_onset", info["delay_end"])) - 1)
+        pre_ts_state = np.asarray(states[row_idx, pre_ts_step], dtype=float)
+        pre_ts_left = float(outputs[row_idx, pre_ts_step, 1])
+        pre_ts_right = float(outputs[row_idx, pre_ts_step, 2])
         records.append(
             {
                 "row_index": int(row_idx),
                 "stimulus_id": int(dataset_index),
                 "repeat_index": int(row_idx % n_repeats),
                 "coh": float(info.get("coh", np.nan)),
+                "stimulus_duration_ms": float(info.get("stimulus_dur", info.get("stimulus_duration", np.nan))),
                 "sure_available": bool(info.get("sure_available", False)),
                 "deterministic_eval": bool(deterministic),
                 "eval_rec_noise": float(rec_noise) if deterministic else np.nan,
+                "recurrent_noise_condition": (
+                    f"deterministic_{float(rec_noise):g}" if deterministic else "model_stochastic"
+                ),
                 "dir_choice": int(info.get("dir_choice", -1)),
                 "choice": int(choice),
                 "chose_sure": bool(choice == 3),
@@ -230,6 +302,12 @@ def collect_repeated_stimulus_evaluation(
                 "sure_output": float(avg[3]),
                 "left_output": float(avg[1]),
                 "right_output": float(avg[2]),
+                "pre_ts_step": int(pre_ts_step),
+                "pre_ts_hidden_state": json.dumps(pre_ts_state.tolist()),
+                "pre_ts_hidden_norm": float(np.linalg.norm(pre_ts_state)),
+                "pre_ts_left_output": pre_ts_left,
+                "pre_ts_right_output": pre_ts_right,
+                "pre_ts_internal_margin": float(abs(pre_ts_left - pre_ts_right)),
             }
         )
     return records, outputs, states
@@ -256,7 +334,7 @@ def summarize_repeated_stimulus_trials(records, outputs, states):
             max_state_abs_diff = max(max_state_abs_diff, float(np.max(np.abs(states[idx] - ref_state))))
 
     repeats_per_stimulus = len(records) // max(len(stimulus_ids), 1)
-    return {
+    summary = {
         "n_rows": int(len(records)),
         "n_stimuli": int(len(stimulus_ids)),
         "n_repeats_per_stimulus": int(repeats_per_stimulus),
@@ -266,6 +344,169 @@ def summarize_repeated_stimulus_trials(records, outputs, states):
         "max_output_abs_diff": float(max_output_abs_diff),
         "max_state_abs_diff": float(max_state_abs_diff),
     }
+    usable = [
+        record for record in records
+        if "pre_ts_internal_margin" in record and np.isfinite(record["pre_ts_internal_margin"])
+    ]
+    variable_ids = [
+        stimulus_id for stimulus_id in stimulus_ids
+        if len({bool(r.get("chose_sure", int(r["choice"]) == 3)) for r in usable if int(r["stimulus_id"]) == stimulus_id}) > 1
+    ]
+    summary["n_stimuli_with_choice_variability"] = int(len(variable_ids))
+    if variable_ids:
+        selected = [r for r in usable if int(r["stimulus_id"]) in variable_ids]
+        stimulus_columns = variable_ids[:-1]
+        y = np.asarray([float(r.get("chose_sure", int(r["choice"]) == 3)) for r in selected])
+        fixed_effects = np.asarray([
+            [float(int(r["stimulus_id"]) == sid) for sid in stimulus_columns]
+            for r in selected
+        ])
+
+        def fit_predictor(predictor):
+            x = np.column_stack([np.asarray(predictor, dtype=float), fixed_effects])
+            design = np.column_stack([np.ones(x.shape[0]), x])
+            coef = np.zeros(design.shape[1], dtype=float)
+            for _ in range(100):
+                p = 1.0 / (1.0 + np.exp(-np.clip(design @ coef, -30, 30)))
+                w = np.maximum(p * (1.0 - p), 1e-7)
+                hessian = design.T @ (design * w[:, None]) + 1e-5 * np.eye(design.shape[1])
+                updated = coef + np.linalg.solve(hessian, design.T @ (y - p))
+                if np.max(np.abs(updated - coef)) < 1e-8:
+                    coef = updated
+                    break
+                coef = updated
+            covariance = np.linalg.pinv(hessian)
+            return float(coef[1]), float(np.sqrt(max(covariance[1, 1], 0.0)))
+
+        margin_coef, margin_se = fit_predictor([r["pre_ts_internal_margin"] for r in selected])
+        summary["within_stimulus_pre_ts_margin_logit_coefficient"] = margin_coef
+        summary["within_stimulus_pre_ts_margin_logit_se"] = margin_se
+        if all("pre_ts_hidden_state" in r for r in selected):
+            hidden = np.asarray([json.loads(r["pre_ts_hidden_state"]) for r in selected], dtype=float)
+            centered = hidden.copy()
+            for stimulus_id in variable_ids:
+                mask = np.asarray([int(r["stimulus_id"]) == stimulus_id for r in selected])
+                centered[mask] -= np.mean(centered[mask], axis=0)
+            _, _, vt = np.linalg.svd(centered, full_matrices=False)
+            hidden_pc1 = centered @ vt[0]
+            margin_values = np.asarray([r["pre_ts_internal_margin"] for r in selected], dtype=float)
+            if safe_corrcoef(hidden_pc1, margin_values) < 0:
+                hidden_pc1 *= -1.0
+            hidden_coef, hidden_se = fit_predictor(hidden_pc1)
+            summary["within_stimulus_pre_ts_hidden_pc1_logit_coefficient"] = hidden_coef
+            summary["within_stimulus_pre_ts_hidden_pc1_logit_se"] = hidden_se
+            summary["pre_ts_hidden_pc1_variance_fraction"] = float(
+                np.var(hidden_pc1) / max(np.sum(np.var(centered, axis=0)), 1e-12)
+            )
+        summary["within_stimulus_analysis_n"] = int(len(selected))
+        summary["within_stimulus_analysis"] = (
+            "stimulus fixed-effects logistic regression using pre-TS margin and "
+            "within-stimulus hidden-state PC1"
+        )
+    else:
+        summary["within_stimulus_pre_ts_margin_logit_coefficient"] = np.nan
+        summary["within_stimulus_pre_ts_margin_logit_se"] = np.nan
+        summary["within_stimulus_analysis_n"] = 0
+        summary["within_stimulus_analysis"] = "not estimable: no repeated stimulus changed sure/direction choice"
+    return summary
+
+
+def summarize_sure_output_dynamics(outputs, trial_info, choices, pre_window=50, post_window=50):
+    outputs = np.asarray(outputs, dtype=float)
+    choices = np.asarray(choices, dtype=int)
+    relative_steps = np.arange(-int(pre_window), int(post_window) + 1)
+    aligned = np.full((len(trial_info), relative_steps.size), np.nan, dtype=float)
+    trial_rows = []
+    for idx, info in enumerate(trial_info):
+        ts_onset = int(info.get("ts_onset", info.get("delay_end", 0)))
+        delay_end = int(info.get("delay_end", 0))
+        for col, rel in enumerate(relative_steps):
+            step = ts_onset + int(rel)
+            if 0 <= step < outputs.shape[1]:
+                aligned[idx, col] = outputs[idx, step, 3]
+        pre_slice = outputs[idx, max(0, ts_onset - int(pre_window)):ts_onset, 3]
+        immediate_slice = outputs[idx, ts_onset:min(outputs.shape[1], ts_onset + 10), 3]
+        pre_go_slice = outputs[idx, max(0, delay_end - 10):delay_end, 3]
+        post_go_slice = outputs[idx, delay_end:min(outputs.shape[1], delay_end + 10), 3]
+        trial_rows.append({
+            "trial_index": int(idx),
+            "sure_available": bool(info.get("sure_available", False)),
+            "choice": int(choices[idx]),
+            "chose_sure": bool(choices[idx] == 3),
+            "pre_ts_sure_output": float(np.mean(pre_slice)) if pre_slice.size else np.nan,
+            "immediate_post_ts_sure_output": float(np.mean(immediate_slice)) if immediate_slice.size else np.nan,
+            "pre_go_sure_output": float(np.mean(pre_go_slice)) if pre_go_slice.size else np.nan,
+            "post_go_sure_output": float(np.mean(post_go_slice)) if post_go_slice.size else np.nan,
+        })
+    offered = np.asarray([bool(info.get("sure_available", False)) for info in trial_info])
+    sure = choices == 3
+    direction = np.isin(choices, [1, 2])
+    def group_mean(field, mask):
+        values = np.asarray([row[field] for row in trial_rows], dtype=float)
+        return float(np.nanmean(values[mask])) if np.any(mask) else np.nan
+    pre_values = np.asarray([row["pre_ts_sure_output"] for row in trial_rows])
+    future_sure = offered & sure
+    future_waived = offered & direction
+    offered_trace = np.nanmean(aligned[offered], axis=0) if np.any(offered) else np.full(relative_steps.size, np.nan)
+    unoffered_trace = np.nanmean(aligned[~offered], axis=0) if np.any(~offered) else np.full(relative_steps.size, np.nan)
+    if np.any(future_sure) and np.any(future_waived):
+        choice_diff_trace = np.nanmean(aligned[future_sure], axis=0) - np.nanmean(aligned[future_waived], axis=0)
+        post_choice_trace = choice_diff_trace.copy()
+        post_choice_trace[relative_steps < 0] = np.nan
+        divergence_step = half_peak_onset(relative_steps, post_choice_trace)
+    else:
+        divergence_step = np.nan
+    pre_cols = relative_steps < 0
+    offered_leakage = float(np.nanmean(offered_trace[pre_cols] - unoffered_trace[pre_cols])) if np.any(offered) and np.any(~offered) else np.nan
+    summary = {
+        "n_trials": int(len(trial_info)),
+        "n_offered": int(np.sum(offered)),
+        "mean_pre_ts_sure_output": float(np.nanmean(pre_values)),
+        "pre_ts_future_sure_minus_waived": group_mean("pre_ts_sure_output", future_sure) - group_mean("pre_ts_sure_output", future_waived),
+        "post_ts_future_sure_minus_waived": group_mean("immediate_post_ts_sure_output", future_sure) - group_mean("immediate_post_ts_sure_output", future_waived),
+        "pre_ts_offered_minus_unoffered": offered_leakage,
+        "pre_go_future_sure_minus_waived": group_mean("pre_go_sure_output", future_sure) - group_mean("pre_go_sure_output", future_waived),
+        "post_go_future_sure_minus_waived": group_mean("post_go_sure_output", future_sure) - group_mean("post_go_sure_output", future_waived),
+        "post_ts_half_peak_divergence_relative_step": divergence_step,
+    }
+    plot_data = {
+        "relative_steps": relative_steps,
+        "aligned": aligned,
+        "future_sure": future_sure,
+        "future_waived": future_waived,
+        "offered": offered,
+    }
+    return summary, trial_rows, plot_data
+
+
+def plot_sure_output_dynamics(path, plot_data):
+    import matplotlib.pyplot as plt
+    rel = plot_data["relative_steps"]
+    aligned = plot_data["aligned"]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+    for mask, label, color in [
+        (plot_data["future_sure"], "future sure", "#7b4aa0"),
+        (plot_data["future_waived"], "future direction / waived", "#2f6f9f"),
+    ]:
+        if np.any(mask):
+            axes[0].plot(rel, np.nanmean(aligned[mask], axis=0), label=label, color=color)
+    offered = plot_data["offered"]
+    for mask, label, color in [(offered, "offered", "#d17c25"), (~offered, "unoffered", "#555555")]:
+        if np.any(mask):
+            axes[1].plot(rel, np.nanmean(aligned[mask], axis=0), label=label, color=color)
+    for ax in axes:
+        ax.axvline(0, color="black", linestyle="--", alpha=0.7)
+        ax.set_xlabel("steps from nominal TS onset")
+        ax.grid(alpha=0.25)
+        ax.legend()
+    axes[0].set_ylabel("actual sure output y_sure(t)")
+    axes[0].set_title("Choice-conditioned")
+    axes[1].set_title("Offer leakage control")
+    fig.tight_layout()
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+    return path
 
 
 def plot_repeated_stimulus_dynamics(path, records, outputs):

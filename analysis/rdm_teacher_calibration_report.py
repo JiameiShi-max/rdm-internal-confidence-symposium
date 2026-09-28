@@ -21,6 +21,7 @@ BIN_FIELD_ORDER = [
     "internal_margin_max",
     "internal_margin_mean",
     "p_correct_proxy_mean",
+    "empirical_accuracy",
     "expected_direction_value_mean",
     "sure_target_mean",
     "external_sensory_margin_mean",
@@ -117,6 +118,16 @@ def load_teacher_dataset(dataset_path):
         "teacher_direction_success_proxy": np.asarray(
             npz["teacher_direction_success_proxy"], dtype=float
         ),
+        "teacher_correct": (
+            np.asarray(npz["teacher_correct"], dtype=bool)
+            if "teacher_correct" in npz.files
+            else None
+        ),
+        "teacher_direction_choice": (
+            np.asarray(npz["teacher_direction_choice"], dtype=int)
+            if "teacher_direction_choice" in npz.files
+            else None
+        ),
         "teacher_expected_direction_value": np.asarray(
             npz["teacher_expected_direction_value"], dtype=float
         ),
@@ -156,6 +167,7 @@ def build_calibration_bins(
     n_bins=10,
     external_sensory_margin=None,
     external_sure_strength=None,
+    teacher_correct=None,
 ):
     internal_margin = np.asarray(internal_margin, dtype=float)
     p_correct_proxy = np.asarray(p_correct_proxy, dtype=float)
@@ -169,6 +181,8 @@ def build_calibration_bins(
         external_sure_strength = np.full(internal_margin.shape, np.nan, dtype=float)
     external_sensory_margin = np.asarray(external_sensory_margin, dtype=float)
     external_sure_strength = np.asarray(external_sure_strength, dtype=float)
+    if teacher_correct is not None:
+        teacher_correct = np.asarray(teacher_correct, dtype=float)
 
     ok = np.isfinite(internal_margin)
     valid_margin = internal_margin[ok]
@@ -189,6 +203,9 @@ def build_calibration_bins(
                 "internal_margin_max": float(np.max(internal_margin[in_bin])),
                 "internal_margin_mean": _mean(internal_margin[in_bin]),
                 "p_correct_proxy_mean": _mean(p_correct_proxy[in_bin]),
+                "empirical_accuracy": (
+                    _mean(teacher_correct[in_bin]) if teacher_correct is not None else None
+                ),
                 "expected_direction_value_mean": _mean(expected_direction_value[in_bin]),
                 "sure_target_mean": _mean(sure_strength[in_bin & sure_available]),
                 "external_sensory_margin_mean": _mean(external_sensory_margin[in_bin]),
@@ -213,6 +230,11 @@ def summarize_by_coherence(dataset):
                 "n_sure_offered": int(np.sum(offered)),
                 "internal_margin_mean": _mean(dataset["teacher_internal_margin"][in_coh]),
                 "p_correct_proxy_mean": _mean(dataset["teacher_direction_success_proxy"][in_coh]),
+                "empirical_accuracy": (
+                    _mean(dataset["teacher_correct"][in_coh])
+                    if dataset["teacher_correct"] is not None
+                    else None
+                ),
                 "expected_direction_value_mean": _mean(
                     dataset["teacher_expected_direction_value"][in_coh]
                 ),
@@ -223,19 +245,165 @@ def summarize_by_coherence(dataset):
     return rows
 
 
+def _binary_metrics(y, probability):
+    y = np.asarray(y, dtype=float)
+    probability = np.clip(np.asarray(probability, dtype=float), 1e-7, 1.0 - 1e-7)
+    ok = np.isfinite(y) & np.isfinite(probability)
+    y = y[ok]
+    probability = probability[ok]
+    if y.size == 0:
+        return {"n": 0, "brier_score": None, "log_loss": None, "auc": None}
+    auc = None
+    positive = probability[y == 1]
+    negative = probability[y == 0]
+    if positive.size and negative.size:
+        auc = float(np.mean(positive[:, None] > negative[None, :]) + 0.5 * np.mean(positive[:, None] == negative[None, :]))
+    return {
+        "n": int(y.size),
+        "brier_score": float(np.mean((probability - y) ** 2)),
+        "log_loss": float(-np.mean(y * np.log(probability) + (1.0 - y) * np.log(1.0 - probability))),
+        "auc": auc,
+    }
+
+
+def _fit_logistic(x, y, max_iter=100):
+    x = np.asarray(x, dtype=float)
+    if x.ndim == 1:
+        x = x[:, None]
+    y = np.asarray(y, dtype=float)
+    design = np.column_stack([np.ones(x.shape[0]), x])
+    coef = np.zeros(design.shape[1], dtype=float)
+    for _ in range(int(max_iter)):
+        p = 1.0 / (1.0 + np.exp(-np.clip(design @ coef, -30, 30)))
+        w = np.maximum(p * (1.0 - p), 1e-7)
+        hessian = design.T @ (design * w[:, None]) + 1e-7 * np.eye(design.shape[1])
+        next_coef = coef + np.linalg.solve(hessian, design.T @ (y - p))
+        if np.max(np.abs(next_coef - coef)) < 1e-9:
+            coef = next_coef
+            break
+        coef = next_coef
+    p = 1.0 / (1.0 + np.exp(-np.clip(design @ coef, -30, 30)))
+    w = np.maximum(p * (1.0 - p), 1e-7)
+    covariance = np.linalg.pinv(design.T @ (design * w[:, None]) + 1e-7 * np.eye(design.shape[1]))
+    return coef, np.sqrt(np.maximum(np.diag(covariance), 0.0))
+
+
+def _predict_logistic(coef, x):
+    x = np.asarray(x, dtype=float)
+    if x.ndim == 1:
+        x = x[:, None]
+    design = np.column_stack([np.ones(x.shape[0]), x])
+    return 1.0 / (1.0 + np.exp(-np.clip(design @ np.asarray(coef), -30, 30)))
+
+
+def compare_confidence_models(margin, duration_ms, teacher_correct, n_folds=5, seed=7):
+    margin = np.asarray(margin, dtype=float)
+    duration_s = np.asarray(duration_ms, dtype=float) / 1000.0
+    y = np.asarray(teacher_correct, dtype=float)
+    ok = np.isfinite(margin) & np.isfinite(duration_s) & np.isfinite(y)
+    margin, duration_s, y = margin[ok], duration_s[ok], y[ok]
+    models = {
+        "margin": np.column_stack([margin]),
+        "margin_duration": np.column_stack([margin, duration_s]),
+        "margin_duration_interaction": np.column_stack([margin, duration_s, margin * duration_s]),
+    }
+    rng = np.random.RandomState(int(seed))
+    order = rng.permutation(y.size)
+    folds = np.array_split(order, min(int(n_folds), max(2, y.size)))
+    results = {}
+    for name, features in models.items():
+        predictions = np.full(y.size, np.nan, dtype=float)
+        for test_idx in folds:
+            train_mask = np.ones(y.size, dtype=bool)
+            train_mask[test_idx] = False
+            if len(np.unique(y[train_mask])) < 2:
+                predictions[test_idx] = np.mean(y[train_mask])
+            else:
+                coef, _ = _fit_logistic(features[train_mask], y[train_mask])
+                predictions[test_idx] = _predict_logistic(coef, features[test_idx])
+        coef, se = _fit_logistic(features, y)
+        results[name] = {
+            **_binary_metrics(y, predictions),
+            "coefficients": [float(v) for v in coef],
+            "coefficient_se": [float(v) for v in se],
+        }
+    baseline = results["margin"]
+    duration = results["margin_duration"]
+    improvement = float(baseline["log_loss"] - duration["log_loss"])
+    results["decision"] = {
+        "duration_log_loss_improvement": improvement,
+        "duration_adds_meaningful_information": bool(improvement >= 0.002),
+        "recommended_mapping": (
+            "empirical_margin_duration" if improvement >= 0.002 else "legacy_margin"
+        ),
+        "threshold": 0.002,
+    }
+    return results
+
+
+def empirical_accuracy_tables(margin, duration_ms, teacher_correct, n_bins=5):
+    margin = np.asarray(margin, dtype=float)
+    duration_ms = np.asarray(duration_ms, dtype=float)
+    correct = np.asarray(teacher_correct, dtype=float)
+    ok = np.isfinite(margin) & np.isfinite(duration_ms) & np.isfinite(correct)
+    margin, duration_ms, correct = margin[ok], duration_ms[ok], correct[ok]
+    if correct.size == 0:
+        return [], []
+    duration_edges = np.unique(np.quantile(duration_ms, np.linspace(0, 1, int(n_bins) + 1)))
+    margin_edges = np.unique(np.quantile(margin, np.linspace(0, 1, int(n_bins) + 1)))
+    duration_rows = []
+    joint_rows = []
+    for d_idx in range(max(0, duration_edges.size - 1)):
+        d_select = (duration_ms >= duration_edges[d_idx]) & (
+            (duration_ms <= duration_edges[d_idx + 1])
+            if d_idx == duration_edges.size - 2
+            else (duration_ms < duration_edges[d_idx + 1])
+        )
+        duration_rows.append({
+            "duration_bin": int(d_idx),
+            "duration_low_ms": float(duration_edges[d_idx]),
+            "duration_high_ms": float(duration_edges[d_idx + 1]),
+            "duration_mean_ms": _mean(duration_ms[d_select]),
+            "n_trials": int(np.sum(d_select)),
+            "empirical_accuracy": _mean(correct[d_select]),
+        })
+        for m_idx in range(max(0, margin_edges.size - 1)):
+            m_select = (margin >= margin_edges[m_idx]) & (
+                (margin <= margin_edges[m_idx + 1])
+                if m_idx == margin_edges.size - 2
+                else (margin < margin_edges[m_idx + 1])
+            )
+            select = d_select & m_select
+            joint_rows.append({
+                "duration_bin": int(d_idx),
+                "margin_bin": int(m_idx),
+                "duration_mean_ms": _mean(duration_ms[select]),
+                "margin_mean": _mean(margin[select]),
+                "n_trials": int(np.sum(select)),
+                "empirical_accuracy": _mean(correct[select]),
+            })
+    return duration_rows, joint_rows
+
+
 def summarize_teacher_calibration(dataset, bins):
     n_trials = int(dataset["n_trials"])
     n_offered = int(np.sum(dataset["sure_available"]))
-    return {
+    empirical_available = dataset.get("teacher_correct") is not None
+    summary = {
         "dataset": dataset["dataset_path"],
         "n_trials": n_trials,
         "n_sure_offered": n_offered,
         "sure_offered_rate": float(n_offered / n_trials) if n_trials else None,
-        "calibration_target": "teacher_direction_success_proxy",
-        "empirical_teacher_accuracy_available": False,
+        "calibration_target": (
+            "empirical_teacher_direction_correctness"
+            if empirical_available
+            else "teacher_direction_success_proxy"
+        ),
+        "empirical_teacher_accuracy_available": bool(empirical_available),
         "interpretation_boundary": (
-            "This report validates the saved internal-confidence proxy mapping; "
-            "the exported dataset does not contain empirical teacher trial correctness."
+            "Calibration uses actual correctness of the teacher's left/right preference."
+            if empirical_available
+            else "Legacy artifact is incompatible with empirical calibration because teacher_correct is absent."
         ),
         "internal_margin_center_used": dataset["internal_margin_center_used"],
         "internal_margin_temp_used": dataset["internal_margin_temp_used"],
@@ -264,6 +432,29 @@ def summarize_teacher_calibration(dataset, bins):
         ),
         "coherence_summary": summarize_by_coherence(dataset),
     }
+    if empirical_available:
+        y = np.asarray(dataset["teacher_correct"], dtype=float)
+        proxy = np.asarray(dataset["teacher_direction_success_proxy"], dtype=float)
+        summary["proxy_metrics"] = _binary_metrics(y, proxy)
+        proxy_logit = np.log(np.clip(proxy, 1e-6, 1 - 1e-6) / np.clip(1 - proxy, 1e-6, 1))
+        calibration_coef, calibration_se = _fit_logistic(proxy_logit, y)
+        summary["calibration_intercept"] = float(calibration_coef[0])
+        summary["calibration_slope"] = float(calibration_coef[1])
+        summary["calibration_intercept_se"] = float(calibration_se[0])
+        summary["calibration_slope_se"] = float(calibration_se[1])
+        summary["confidence_model_comparison"] = compare_confidence_models(
+            dataset["teacher_internal_margin"],
+            dataset["stimulus_dur"],
+            y,
+        )
+        duration_rows, joint_rows = empirical_accuracy_tables(
+            dataset["teacher_internal_margin"],
+            dataset["stimulus_dur"],
+            y,
+        )
+        summary["duration_accuracy"] = duration_rows
+        summary["margin_x_duration_accuracy"] = joint_rows
+    return summary
 
 
 def _clean(value):
@@ -297,6 +488,10 @@ def _write_csv(path, rows, field_order):
 def plot_teacher_calibration(path, summary, bins):
     margin = np.asarray([row["internal_margin_mean"] for row in bins], dtype=float)
     p_correct = np.asarray([row["p_correct_proxy_mean"] for row in bins], dtype=float)
+    empirical = np.asarray([
+        np.nan if row.get("empirical_accuracy") is None else row["empirical_accuracy"]
+        for row in bins
+    ], dtype=float)
     expected_value = np.asarray(
         [row["expected_direction_value_mean"] for row in bins], dtype=float
     )
@@ -307,44 +502,84 @@ def plot_teacher_calibration(path, summary, bins):
     coh_p = np.asarray([row["p_correct_proxy_mean"] for row in coh_rows], dtype=float)
     coh_sure = np.asarray([row["sure_target_mean_offered"] for row in coh_rows], dtype=float)
 
-    fig, axes = plt.subplots(1, 3, figsize=(14.0, 4.4))
+    empirical_available = bool(summary.get("empirical_teacher_accuracy_available"))
+    if empirical_available:
+        fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0))
+        axes = axes.ravel()
+    else:
+        fig, axes = plt.subplots(1, 3, figsize=(14.0, 4.4))
     fig.suptitle("Teacher internal-confidence proxy calibration", fontsize=14, fontweight="bold")
 
-    axes[0].plot(margin, p_correct, marker="o", lw=2.3, color="#1F77B4")
-    axes[0].axvline(
-        summary.get("internal_margin_center_used"),
-        color="#666666",
-        ls="--",
-        lw=1.1,
-        label="auto center",
-    )
-    axes[0].set_xlabel("Teacher internal output margin")
-    axes[0].set_ylabel("P(correct) proxy")
-    axes[0].set_ylim(0.0, 1.03)
-    axes[0].legend(frameon=False, fontsize=8)
-    axes[0].grid(True, alpha=0.25)
+    if empirical_available:
+        axes[0].plot(p_correct, empirical, marker="o", lw=2.3, color="#1F77B4")
+        axes[0].plot([0, 1], [0, 1], linestyle="--", color="#666666")
+        axes[0].set_xlabel("predicted P(correct)")
+        axes[0].set_ylabel("empirical accuracy")
+        axes[0].set_title("Reliability")
+        axes[1].plot(margin, empirical, marker="s", lw=2.0, color="#E45756")
+        axes[1].set_xlabel("teacher internal margin")
+        axes[1].set_ylabel("empirical accuracy")
+        axes[1].set_title("Accuracy vs margin")
+        duration_rows = summary.get("duration_accuracy", [])
+        axes[2].plot(
+            [row["duration_mean_ms"] for row in duration_rows],
+            [row["empirical_accuracy"] for row in duration_rows],
+            marker="o",
+            color="#54A24B",
+        )
+        axes[2].set_xlabel("stimulus duration (ms)")
+        axes[2].set_ylabel("empirical accuracy")
+        axes[2].set_title("Accuracy vs duration")
+        joint = summary.get("margin_x_duration_accuracy", [])
+        n_d = max([row["duration_bin"] for row in joint], default=-1) + 1
+        n_m = max([row["margin_bin"] for row in joint], default=-1) + 1
+        heat = np.full((n_d, n_m), np.nan)
+        for row in joint:
+            heat[row["duration_bin"], row["margin_bin"]] = row["empirical_accuracy"]
+        image = axes[3].imshow(heat, origin="lower", aspect="auto", vmin=0, vmax=1, cmap="viridis")
+        axes[3].set_xlabel("margin quantile bin")
+        axes[3].set_ylabel("duration quantile bin")
+        axes[3].set_title("Accuracy: margin x duration")
+        fig.colorbar(image, ax=axes[3], label="accuracy")
+        for ax in axes[:3]:
+            ax.set_ylim(0, 1.03)
+            ax.grid(True, alpha=0.25)
+    else:
+        axes[0].plot(margin, p_correct, marker="o", lw=2.3, color="#1F77B4")
+        axes[0].axvline(
+            summary.get("internal_margin_center_used"),
+            color="#666666",
+            ls="--",
+            lw=1.1,
+            label="mapping center",
+        )
+        axes[0].set_xlabel("Teacher internal output margin")
+        axes[0].set_ylabel("P(correct) proxy")
+        axes[0].set_ylim(0.0, 1.03)
+        axes[0].legend(frameon=False, fontsize=8)
+        axes[0].grid(True, alpha=0.25)
 
-    axes[1].plot(margin, expected_value, marker="s", lw=2.1, color="#4C78A8", label="Expected direction value")
-    axes[1].plot(margin, sure_target, marker="^", lw=2.1, color="#E45756", label="Sure target")
-    axes[1].set_xlabel("Teacher internal output margin")
-    axes[1].set_ylabel("Target value")
-    axes[1].set_ylim(0.0, 1.03)
-    axes[1].legend(frameon=False, fontsize=8)
-    axes[1].grid(True, alpha=0.25)
+        axes[1].plot(margin, expected_value, marker="s", lw=2.1, color="#4C78A8", label="Expected direction value")
+        axes[1].plot(margin, sure_target, marker="^", lw=2.1, color="#E45756", label="Sure target")
+        axes[1].set_xlabel("Teacher internal output margin")
+        axes[1].set_ylabel("Target value")
+        axes[1].set_ylim(0.0, 1.03)
+        axes[1].legend(frameon=False, fontsize=8)
+        axes[1].grid(True, alpha=0.25)
 
-    axes[2].plot(coh, coh_p, marker="o", lw=2.1, color="#1F77B4", label="P(correct) proxy")
-    axes[2].plot(coh, coh_sure, marker="^", lw=2.1, color="#E45756", label="Sure target | offered")
-    axes[2].set_xlabel("Motion coherence")
-    axes[2].set_ylabel("Mean proxy / target")
-    axes[2].set_ylim(0.0, 1.03)
-    axes[2].set_xscale("symlog", linthresh=0.032)
-    axes[2].legend(frameon=False, fontsize=8)
-    axes[2].grid(True, alpha=0.25)
+        axes[2].plot(coh, coh_p, marker="o", lw=2.1, color="#1F77B4", label="P(correct) proxy")
+        axes[2].plot(coh, coh_sure, marker="^", lw=2.1, color="#E45756", label="Sure target | offered")
+        axes[2].set_xlabel("Motion coherence")
+        axes[2].set_ylabel("Mean proxy / target")
+        axes[2].set_ylim(0.0, 1.03)
+        axes[2].set_xscale("symlog", linthresh=0.032)
+        axes[2].legend(frameon=False, fontsize=8)
+        axes[2].grid(True, alpha=0.25)
 
     fig.text(
         0.02,
         0.01,
-        "Boundary: exported datasets contain proxy P(correct), not empirical teacher trial accuracy.",
+        summary.get("interpretation_boundary", ""),
         fontsize=8,
         color="#555555",
     )
@@ -358,7 +593,7 @@ def plot_teacher_calibration(path, summary, bins):
 def write_teacher_calibration_outputs(output_dir, figure_dir, summary, bins):
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(figure_dir, exist_ok=True)
-    return {
+    outputs = {
         "summary_json": _write_json(
             os.path.join(output_dir, "teacher_calibration_summary.json"), summary
         ),
@@ -383,6 +618,18 @@ def write_teacher_calibration_outputs(output_dir, figure_dir, summary, bins):
             os.path.join(figure_dir, "fig5_teacher_calibration.png"), summary, bins
         ),
     }
+    if summary.get("empirical_teacher_accuracy_available"):
+        outputs["duration_csv"] = _write_csv(
+            os.path.join(output_dir, "teacher_accuracy_by_duration.csv"),
+            summary.get("duration_accuracy", []),
+            ["duration_bin", "duration_low_ms", "duration_high_ms", "duration_mean_ms", "n_trials", "empirical_accuracy"],
+        )
+        outputs["margin_duration_csv"] = _write_csv(
+            os.path.join(output_dir, "teacher_accuracy_by_margin_duration.csv"),
+            summary.get("margin_x_duration_accuracy", []),
+            ["duration_bin", "margin_bin", "duration_mean_ms", "margin_mean", "n_trials", "empirical_accuracy"],
+        )
+    return outputs
 
 
 def build_report(dataset_path, n_bins=10):
@@ -397,6 +644,7 @@ def build_report(dataset_path, n_bins=10):
         n_bins=n_bins,
         external_sensory_margin=dataset["external_sensory_margin"],
         external_sure_strength=dataset["external_sure_strength"],
+        teacher_correct=dataset["teacher_correct"],
     )
     summary = summarize_teacher_calibration(dataset, bins)
     return summary, bins

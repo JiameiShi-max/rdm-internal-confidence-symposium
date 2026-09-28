@@ -2,7 +2,7 @@
 
 This repository contains the symposium release for a supervised proof-of-concept model of sure-option behavior in a random-dot motion task.
 
-The core idea is that a teacher RNN provides an internal confidence proxy. That proxy is calibrated into an expected value signal and used to supervise a student RNN's sure-option target. This is not a reinforcement-learning model; it tests whether internally generated confidence can support adaptive sure choices under controlled task timing.
+The core idea is that a teacher RNN provides an internal confidence proxy. That proxy is converted into an expected value signal and used to supervise a student RNN's sure-option target. This is not a reinforcement-learning model. Empirical calibration against the teacher's actual directional correctness is a required model-freeze gate; until it passes, the proxy must not be described as internally learned confidence.
 
 ## Repository layout
 
@@ -45,6 +45,50 @@ PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python scripts/run_timed_teacher.p
 PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python scripts/run_timed_student.py
 PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python scripts/run_original_teacher.py
 PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python scripts/run_original_student.py
+```
+
+### Model-freeze retraining
+
+The timed entry point now samples TS latency uniformly over dt-compatible values from 500–750 ms. It preserves the legacy margin-only confidence mapping by default. Run a fresh teacher export, empirical calibration, and student evaluation as follows:
+
+```bash
+mkdir -p data/model_freeze results/model_freeze
+PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python3 scripts/run_timed_teacher.py \
+  --seed 7 \
+  --output data/model_freeze/teacher_seed7.npz \
+  --summary results/model_freeze/teacher_seed7_summary.json
+PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python3 analysis/rdm_teacher_calibration_report.py \
+  --dataset data/model_freeze/teacher_seed7.npz \
+  --output-dir results/model_freeze \
+  --figure-dir results/model_freeze
+PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python3 scripts/run_timed_student.py \
+  --dataset data/model_freeze/teacher_seed7.npz \
+  --seed 7 \
+  --summary results/model_freeze/student_seed7_summary.json
+PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl python3 analysis/rdm_matched_trial_controls.py \
+  --trials results/model_freeze/student_seed7_summary_trials.csv \
+  --output-dir results/model_freeze \
+  --figure-dir results/model_freeze
+```
+
+Inspect `results/model_freeze/teacher_calibration_summary.json`. Only if its held-out comparison recommends `empirical_margin_duration`, retrain the teacher with `--confidence-mapping empirical_margin_duration --empirical-confidence-coefficients INTERCEPT MARGIN DURATION_S` using the reported full-fit coefficients. This opt-in step is intentionally not automatic.
+
+After the seed-7 candidate is accepted, repeat teacher and student training for seeds 7, 8, and 9 with seed-specific output paths (do not reuse one teacher dataset). Name student summaries `results/model_freeze/multiseed/timed_seed{seed}_summary.json`, calibration summaries `results/model_freeze/teacher_seed{seed}/teacher_calibration_summary.json`, and matched summaries `results/model_freeze/matched_seed{seed}/matched_trial_controls_summary.json`. Aggregate every seed with:
+
+```bash
+PYTHONPATH=src:analysis python3 analysis/rdm_multiseed_validation.py \
+  --aggregate-only \
+  --seeds 7,8,9 \
+  --output-dir results/model_freeze/multiseed \
+  --teacher-calibration-template 'results/model_freeze/teacher_seed{seed}/teacher_calibration_summary.json' \
+  --matched-template 'results/model_freeze/matched_seed{seed}/matched_trial_controls_summary.json'
+PYTHONPATH=src:analysis python3 analysis/model_freeze_report.py \
+  --branch feature/model-freeze-validation \
+  --baseline-commit 32e5a2a577344b4f3c9170b5512e42a81de50796 \
+  --calibration results/model_freeze/teacher_seed7/teacher_calibration_summary.json \
+  --student-summary results/model_freeze/multiseed/timed_seed7_summary.json \
+  --matched results/model_freeze/matched_seed7/matched_trial_controls_summary.json \
+  --multiseed results/model_freeze/multiseed/multiseed_validation_summary.json
 ```
 
 ## Scientific scope

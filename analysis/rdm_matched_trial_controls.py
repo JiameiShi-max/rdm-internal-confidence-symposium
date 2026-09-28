@@ -34,6 +34,9 @@ FLOAT_FIELDS = {
     "teacher_sure_strength",
     "external_sensory_margin",
     "external_sure_strength",
+    "stimulus_duration_ms",
+    "delay_duration_ms",
+    "ts_latency_from_motion_offset_ms",
 }
 
 
@@ -50,6 +53,7 @@ MATCH_FIELD_ORDER = [
     "coh",
     "match_key",
     "match_delta",
+    "stimulus_duration_delta_ms",
     "offered_trial_index",
     "offered_choice_type",
     "offered_correct",
@@ -164,15 +168,29 @@ def compute_delta_inference(deltas, n_bootstrap=1000, n_permutations=1000, seed=
     }
 
 
-def _nearest(record, candidates, match_key):
-    if not _finite(record.get(match_key)):
+def _nearest(record, candidates, match_keys):
+    match_keys = list(match_keys)
+    if not all(_finite(record.get(key)) for key in match_keys):
         return None, None
-    usable = [candidate for candidate in candidates if _finite(candidate.get(match_key))]
+    usable = [
+        candidate for candidate in candidates
+        if all(_finite(candidate.get(key)) for key in match_keys)
+    ]
     if not usable:
         return None, None
-    value = float(record[match_key])
-    best = min(usable, key=lambda candidate: abs(float(candidate[match_key]) - value))
-    return best, abs(float(best[match_key]) - value)
+    scales = {}
+    for key in match_keys:
+        values = np.asarray([float(candidate[key]) for candidate in usable], dtype=float)
+        scales[key] = float(np.std(values)) if np.std(values) > 1e-12 else 1.0
+    def distance(candidate):
+        if len(match_keys) == 1:
+            return abs(float(candidate[match_keys[0]]) - float(record[match_keys[0]]))
+        return float(np.sqrt(np.sum([
+            ((float(candidate[key]) - float(record[key])) / scales[key]) ** 2
+            for key in match_keys
+        ])))
+    best = min(usable, key=distance)
+    return best, distance(best)
 
 
 def _choice_type(record):
@@ -183,7 +201,7 @@ def _choice_type(record):
     return "other"
 
 
-def build_matched_controls(records, match_key="evidence_axis"):
+def build_matched_controls(records, match_key="evidence_axis", match_duration=True):
     offered = [record for record in records if record.get("sure_available")]
     no_sure = [record for record in records if not record.get("sure_available")]
     sure_chosen = [record for record in offered if record.get("chose_sure")]
@@ -197,16 +215,38 @@ def build_matched_controls(records, match_key="evidence_axis"):
         waived_by_coh.setdefault(record.get("coh"), []).append(record)
 
     offered_matches = []
-    for record in offered:
-        matched, delta = _nearest(record, no_sure_by_coh.get(record.get("coh"), []), match_key)
+    used_no_sure = set()
+    # Reserve controls for waived trials first because that is the primary
+    # post-decision-wagering comparison; every control is still used at most once.
+    offered_match_order = sorted(offered, key=lambda record: not bool(record.get("waived_sure")))
+    for record in offered_match_order:
+        candidate_pool = [
+            candidate for candidate in no_sure_by_coh.get(record.get("coh"), [])
+            if candidate.get("trial_index") not in used_no_sure
+        ]
+        match_keys = [match_key]
+        if (
+            match_duration
+            and match_key != "stimulus_duration_ms"
+            and _finite(record.get("stimulus_duration_ms"))
+            and any(_finite(candidate.get("stimulus_duration_ms")) for candidate in candidate_pool)
+        ):
+            match_keys.append("stimulus_duration_ms")
+        matched, delta = _nearest(record, candidate_pool, match_keys)
         if matched is None:
             continue
+        used_no_sure.add(matched.get("trial_index"))
         offered_matches.append(
             {
                 "match_type": "offered_to_no_sure",
                 "coh": record.get("coh"),
-                "match_key": match_key,
+                "match_key": "+".join(match_keys),
                 "match_delta": delta,
+                "stimulus_duration_delta_ms": (
+                    abs(float(record["stimulus_duration_ms"]) - float(matched["stimulus_duration_ms"]))
+                    if _finite(record.get("stimulus_duration_ms")) and _finite(matched.get("stimulus_duration_ms"))
+                    else math.nan
+                ),
                 "offered_trial_index": record.get("trial_index"),
                 "offered_choice_type": _choice_type(record),
                 "offered_correct": bool(record.get("correct")),
@@ -222,10 +262,24 @@ def build_matched_controls(records, match_key="evidence_axis"):
         )
 
     sure_to_waived_matches = []
+    used_waived = set()
     for record in sure_chosen:
-        matched, delta = _nearest(record, waived_by_coh.get(record.get("coh"), []), match_key)
+        candidate_pool = [
+            candidate for candidate in waived_by_coh.get(record.get("coh"), [])
+            if candidate.get("trial_index") not in used_waived
+        ]
+        match_keys = [match_key]
+        if (
+            match_duration
+            and match_key != "stimulus_duration_ms"
+            and _finite(record.get("stimulus_duration_ms"))
+            and any(_finite(candidate.get("stimulus_duration_ms")) for candidate in candidate_pool)
+        ):
+            match_keys.append("stimulus_duration_ms")
+        matched, delta = _nearest(record, candidate_pool, match_keys)
         if matched is None:
             continue
+        used_waived.add(matched.get("trial_index"))
         sure_axis_delta = (
             float(record["sure_axis"]) - float(matched["sure_axis"])
             if _finite(record.get("sure_axis")) and _finite(matched.get("sure_axis"))
@@ -241,8 +295,13 @@ def build_matched_controls(records, match_key="evidence_axis"):
             {
                 "match_type": "sure_to_waived",
                 "coh": record.get("coh"),
-                "match_key": match_key,
+                "match_key": "+".join(match_keys),
                 "match_delta": delta,
+                "stimulus_duration_delta_ms": (
+                    abs(float(record["stimulus_duration_ms"]) - float(matched["stimulus_duration_ms"]))
+                    if _finite(record.get("stimulus_duration_ms")) and _finite(matched.get("stimulus_duration_ms"))
+                    else math.nan
+                ),
                 "sure_trial_index": record.get("trial_index"),
                 "waived_trial_index": matched.get("trial_index"),
                 "sure_axis_delta_sure_minus_waived": sure_axis_delta,
@@ -252,6 +311,7 @@ def build_matched_controls(records, match_key="evidence_axis"):
             }
         )
 
+    offered_matches.sort(key=lambda row: int(row.get("offered_trial_index", -1)))
     return {
         "offered_to_no_sure_matches": offered_matches,
         "sure_to_waived_matches": sure_to_waived_matches,
@@ -295,6 +355,11 @@ def summarize_matched_controls(records, controls, match_key="evidence_axis"):
     confidence_deltas = [
         match.get("confidence_delta_sure_minus_waived") for match in sure_to_waived
     ]
+    accuracy_deltas = [
+        float(bool(match.get("offered_correct")))
+        - float(bool(match.get("matched_no_sure_correct")))
+        for match in waived_matches
+    ]
 
     return {
         "n_trials": int(len(records)),
@@ -308,12 +373,24 @@ def summarize_matched_controls(records, controls, match_key="evidence_axis"):
         "mean_offered_to_no_sure_match_delta": _mean(
             [match.get("match_delta") for match in offered_matches]
         ),
+        "mean_stimulus_duration_match_delta_ms": _mean(
+            [match.get("stimulus_duration_delta_ms") for match in waived_matches]
+        ),
         "overall_p_sure_offered": _fraction(offered, "chose_sure"),
         "no_sure_accuracy": _fraction(no_sure, "correct"),
         "waived_accuracy": _fraction(waived, "correct"),
         "matched_no_sure_accuracy_for_waived": _fraction(
             [{"correct": match.get("matched_no_sure_correct")} for match in waived_matches],
             "correct",
+        ),
+        "waived_minus_matched_no_sure_accuracy": _mean(accuracy_deltas),
+        "waived_accuracy_difference_inference": compute_delta_inference(
+            accuracy_deltas,
+            seed=13,
+        ),
+        "no_control_reuse": bool(
+            len({match.get("matched_no_sure_trial_index") for match in offered_matches})
+            == len(offered_matches)
         ),
         "mean_sure_axis_sure_choice": _mean([record.get("sure_axis") for record in sure_chosen]),
         "mean_sure_axis_waived": _mean([record.get("sure_axis") for record in waived]),
@@ -391,7 +468,8 @@ def plot_matched_controls(path, summary):
         summary.get("waived_accuracy"),
         summary.get("matched_no_sure_accuracy_for_waived"),
     ]
-    axes[1].bar(labels, values, color=["#54A24B", "#4C78A8"])
+    plot_values = [np.nan if value is None else float(value) for value in values]
+    axes[1].bar(labels, plot_values, color=["#54A24B", "#4C78A8"])
     axes[1].set_ylim(0, 1.05)
     axes[1].set_title("Accuracy after evidence matching")
     axes[1].set_ylabel("Direction accuracy")
@@ -403,7 +481,11 @@ def plot_matched_controls(path, summary):
         summary.get("mean_sure_axis_sure_choice"),
         summary.get("mean_sure_axis_waived"),
     ]
-    axes[2].bar(labels, values, color=["#E45756", "#54A24B"])
+    plot_values = [np.nan if value is None else float(value) for value in values]
+    axes[2].bar(labels, plot_values, color=["#E45756", "#54A24B"])
+    for index, value in enumerate(values):
+        if value is None:
+            axes[2].text(index, 0.0, "not estimable", ha="center", va="bottom", rotation=90)
     axes[2].set_title("Sure axis within offered trials")
     axes[2].set_ylabel("Mean sure-axis projection")
     axes[2].tick_params(axis="x", labelrotation=15)
@@ -440,9 +522,13 @@ def write_matched_control_outputs(output_dir, figure_dir, summary, controls):
     }
 
 
-def build_report(trial_csv, match_key="evidence_axis"):
+def build_report(trial_csv, match_key="evidence_axis", match_duration=True):
     records = load_trial_records(trial_csv)
-    controls = build_matched_controls(records, match_key=match_key)
+    controls = build_matched_controls(
+        records,
+        match_key=match_key,
+        match_duration=match_duration,
+    )
     summary = summarize_matched_controls(records, controls, match_key=match_key)
     return summary, controls
 
@@ -451,6 +537,11 @@ def build_arg_parser():
     parser = argparse.ArgumentParser(description="Build matched-trial controls for RDM sure behavior.")
     parser.add_argument("--trials", default=DEFAULT_TRIAL_CSV)
     parser.add_argument("--match-key", default="evidence_axis")
+    parser.add_argument(
+        "--no-duration-match",
+        action="store_true",
+        help="Disable the default stimulus-duration component of matching.",
+    )
     parser.add_argument("--output-dir", default="paper_exports")
     parser.add_argument("--figure-dir", default="paper_figures")
     return parser
@@ -458,7 +549,11 @@ def build_arg_parser():
 
 def main(argv=None):
     args = build_arg_parser().parse_args(argv)
-    summary, controls = build_report(args.trials, match_key=args.match_key)
+    summary, controls = build_report(
+        args.trials,
+        match_key=args.match_key,
+        match_duration=not args.no_duration_match,
+    )
     paths = write_matched_control_outputs(args.output_dir, args.figure_dir, summary, controls)
     print(json.dumps({"outputs": paths, "summary": summary}, indent=2), flush=True)
     return paths

@@ -95,15 +95,20 @@ def build_internal_teacher_records(
     sure_target_blend=0.80,
     readout_anchor="ts_onset",
     pre_go_offset_steps=5,
+    confidence_mapping="legacy_margin",
+    empirical_coefficients=None,
 ):
     n_trials = min(int(outputs.shape[0]), len(trial_info))
     teacher_internal_margin = np.zeros(n_trials, dtype=float)
     teacher_sure_strength = np.zeros(n_trials, dtype=float)
     teacher_expected_direction_value = np.zeros(n_trials, dtype=float)
     teacher_direction_success_proxy = np.zeros(n_trials, dtype=float)
+    teacher_sure_advantage = np.zeros(n_trials, dtype=float)
     external_sensory_margin = np.zeros(n_trials, dtype=float)
     external_sure_strength = np.zeros(n_trials, dtype=float)
     margin_source = np.full(n_trials, "internal_output", dtype=object)
+    teacher_direction_choice = np.zeros(n_trials, dtype=int)
+    teacher_correct = np.zeros(n_trials, dtype=bool)
     sure_available = np.asarray(
         [bool(trial_info[idx].get("sure_available", False)) for idx in range(n_trials)],
         dtype=bool,
@@ -120,6 +125,15 @@ def build_internal_teacher_records(
             outputs[idx],
             center_step=readout_step,
             half_window=half_window,
+        )
+        directional = average_output_window(
+            outputs[idx],
+            center_step=int(info["delay_end"]),
+            half_window=half_window,
+        )[1:3]
+        teacher_direction_choice[idx] = int(np.argmax(directional))
+        teacher_correct[idx] = bool(
+            teacher_direction_choice[idx] == int(info.get("dir_choice", -1))
         )
 
     if str(internal_calibration) == "auto":
@@ -169,9 +183,36 @@ def build_internal_teacher_records(
             margin_source="internal_output",
         )
 
+        if str(confidence_mapping) == "empirical_margin_duration":
+            if empirical_coefficients is None or len(empirical_coefficients) not in (3, 4):
+                raise ValueError(
+                    "empirical_margin_duration requires coefficients for intercept, "
+                    "margin, duration, and optional interaction"
+                )
+            duration_s = float(info.get("stimulus_dur", np.nan)) / 1000.0
+            terms = [1.0, teacher_internal_margin[idx], duration_s]
+            if len(empirical_coefficients) == 4:
+                terms.append(teacher_internal_margin[idx] * duration_s)
+            logit = float(np.dot(np.asarray(empirical_coefficients, dtype=float), terms))
+            p_correct = float(1.0 / (1.0 + np.exp(-np.clip(logit, -40.0, 40.0))))
+            expected_value = float(error_reward + p_correct * (direction_reward - error_reward))
+            sure_advantage = float(sure_reward - expected_value)
+            sure_preference = float(
+                1.0 / (1.0 + np.exp(-np.clip(sure_advantage / sure_value_temp, -40.0, 40.0)))
+            )
+            teacher["direction_success_proxy"] = p_correct
+            teacher["expected_direction_value"] = expected_value
+            teacher["sure_advantage"] = sure_advantage
+            if bool(info["sure_available"]):
+                blended = 0.5 + sure_target_blend * (sure_preference - 0.5)
+                teacher["sure_strength"] = float(
+                    np.clip(blended, sure_target_min, sure_target_max)
+                )
+
         teacher_sure_strength[idx] = float(teacher["sure_strength"])
         teacher_expected_direction_value[idx] = float(teacher["expected_direction_value"])
         teacher_direction_success_proxy[idx] = float(teacher["direction_success_proxy"])
+        teacher_sure_advantage[idx] = float(teacher["sure_advantage"])
         external_sensory_margin[idx] = float(info.get("sensory_margin", np.nan))
         external_sure_strength[idx] = float(info.get("sure_strength", np.nan))
 
@@ -180,9 +221,17 @@ def build_internal_teacher_records(
         "teacher_sure_strength": teacher_sure_strength,
         "teacher_expected_direction_value": teacher_expected_direction_value,
         "teacher_direction_success_proxy": teacher_direction_success_proxy,
+        "teacher_sure_advantage": teacher_sure_advantage,
         "external_sensory_margin": external_sensory_margin,
         "external_sure_strength": external_sure_strength,
         "margin_source": margin_source,
+        "teacher_direction_choice": teacher_direction_choice,
+        "teacher_correct": teacher_correct,
+        "confidence_mapping": str(confidence_mapping),
+        "empirical_confidence_coefficients": np.asarray(
+            [] if empirical_coefficients is None else empirical_coefficients,
+            dtype=float,
+        ),
         "internal_margin_center_used": np.asarray(float(used_margin_center), dtype=float),
         "internal_margin_temp_used": np.asarray(float(used_margin_temp), dtype=float),
         "internal_margin_calibration_mode": str(calibration_mode),
@@ -331,10 +380,28 @@ def mean_or_nan(values):
     return float(np.mean(values))
 
 
+def min_or_nan(values):
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    return float(np.min(values)) if values.size else np.nan
+
+
+def max_or_nan(values):
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    return float(np.max(values)) if values.size else np.nan
+
+
 def summarize_internal_teacher_dataset(dataset):
     trial_info = dataset["trial_info"]
     teacher_records = dataset["teacher_records"]
     sure_available = np.asarray([bool(info["sure_available"]) for info in trial_info], dtype=bool)
+    stimulus_durations = np.asarray([float(info.get("stimulus_dur", np.nan)) for info in trial_info])
+    delay_durations = np.asarray([float(info.get("delay_dur", np.nan)) for info in trial_info])
+    ts_latencies = np.asarray([
+        float(info.get("ts_latency_from_motion_offset", info.get("ts_delay", np.nan)))
+        for info in trial_info
+    ])
     post_go_sure_targets = []
     for idx, info in enumerate(trial_info):
         if bool(info["sure_available"]):
@@ -347,6 +414,15 @@ def summarize_internal_teacher_dataset(dataset):
     return {
         "n_trials": int(len(trial_info)),
         "n_sure_available": int(np.sum(sure_available)),
+        "sure_offer_rate": float(np.mean(sure_available)) if sure_available.size else np.nan,
+        "observed_stimulus_duration_ms_min": min_or_nan(stimulus_durations),
+        "observed_stimulus_duration_ms_max": max_or_nan(stimulus_durations),
+        "observed_delay_duration_ms_min": min_or_nan(delay_durations),
+        "observed_delay_duration_ms_max": max_or_nan(delay_durations),
+        "observed_ts_latency_ms_min": min_or_nan(ts_latencies),
+        "observed_ts_latency_ms_max": max_or_nan(ts_latencies),
+        "n_unique_ts_latencies": int(np.unique(ts_latencies[np.isfinite(ts_latencies)]).size),
+        "teacher_direction_accuracy": mean_or_nan(teacher_records.get("teacher_correct", [])),
         "mean_teacher_internal_margin": mean_or_nan(teacher_records["teacher_internal_margin"]),
         "mean_teacher_sure_strength": mean_or_nan(teacher_records["teacher_sure_strength"]),
         "mean_external_sensory_margin": mean_or_nan(teacher_records["external_sensory_margin"]),
@@ -396,6 +472,8 @@ def build_stage8_teacher_task(
     delay_min=400,
     delay_max=1000,
     ts_delay=500,
+    ts_latency_min=None,
+    ts_latency_max=None,
     min_post_ts=0,
     min_response_dur=0,
     sure_offer_prob=None,
@@ -423,6 +501,8 @@ def build_stage8_teacher_task(
         delay_min=delay_min,
         delay_max=delay_max,
         ts_delay=ts_delay,
+        ts_latency_min=ts_latency_min,
+        ts_latency_max=ts_latency_max,
         min_post_ts=min_post_ts,
         min_response_dur=min_response_dur,
         sure_offer_prob=sure_offer_prob,
@@ -467,6 +547,8 @@ def export_stage9_internal_teacher_dataset(args):
         delay_min=args.delay_min,
         delay_max=args.delay_max,
         ts_delay=args.ts_delay,
+        ts_latency_min=args.ts_latency_min,
+        ts_latency_max=args.ts_latency_max,
         min_post_ts=args.min_post_ts,
         min_response_dur=args.min_response_dur,
         sure_offer_prob=args.sure_offer_prob,
@@ -518,6 +600,8 @@ def export_stage9_internal_teacher_dataset(args):
         min_margin_temp=args.internal_min_margin_temp,
         readout_anchor=args.internal_readout_anchor,
         pre_go_offset_steps=args.internal_pre_go_offset_steps,
+        confidence_mapping=args.confidence_mapping,
+        empirical_coefficients=args.empirical_confidence_coefficients,
         direction_reward=args.direction_reward,
         error_reward=args.error_reward,
         sure_reward=args.sure_reward,
@@ -543,6 +627,8 @@ def export_stage9_internal_teacher_dataset(args):
     summary["delay_min"] = int(args.delay_min)
     summary["delay_max"] = int(args.delay_max)
     summary["ts_delay"] = int(args.ts_delay)
+    summary["ts_latency_min"] = int(args.ts_delay if args.ts_latency_min is None else args.ts_latency_min)
+    summary["ts_latency_max"] = int(args.ts_delay if args.ts_latency_max is None else args.ts_latency_max)
     summary["min_post_ts"] = int(args.min_post_ts)
     summary["min_response_dur"] = int(args.min_response_dur)
     summary["sure_offer_prob"] = None if args.sure_offer_prob is None else float(args.sure_offer_prob)
@@ -580,6 +666,8 @@ def build_arg_parser():
     parser.add_argument("--delay-min", type=int, default=400)
     parser.add_argument("--delay-max", type=int, default=1000)
     parser.add_argument("--ts-delay", type=int, default=500)
+    parser.add_argument("--ts-latency-min", type=int, default=None)
+    parser.add_argument("--ts-latency-max", type=int, default=None)
     parser.add_argument("--min-post-ts", type=int, default=0)
     parser.add_argument("--min-response-dur", type=int, default=0)
     parser.add_argument("--sure-offer-prob", type=float, default=None)
@@ -606,6 +694,19 @@ def build_arg_parser():
     parser.add_argument("--sure-target-max", type=float, default=0.95)
     parser.add_argument("--sure-target-blend", type=float, default=0.80)
     parser.add_argument("--pre-go-sure-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--confidence-mapping",
+        choices=["legacy_margin", "empirical_margin_duration"],
+        default="legacy_margin",
+        help="Keep the legacy mapping unless empirical validation supports duration.",
+    )
+    parser.add_argument(
+        "--empirical-confidence-coefficients",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Intercept, margin, duration_s, and optional margin:duration coefficient.",
+    )
     return parser
 
 

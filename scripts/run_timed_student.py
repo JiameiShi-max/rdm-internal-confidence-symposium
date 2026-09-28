@@ -10,7 +10,7 @@ from sure_target_stage9_internal_readout import main
 
 DEFAULT_ARGS = [
     '--dataset',
-    'data/timed_internal_teacher_dataset_fixed_50k.npz',
+    'data/model_freeze/timed_teacher_variable_ts_seed7.npz',
     '--training-iters',
     '50000',
     '--loss-epoch',
@@ -20,7 +20,7 @@ DEFAULT_ARGS = [
     '--n-eval-batches',
     '8',
     '--summary',
-    'results/reports/timed_student_summary.json',
+    'results/model_freeze/student_seed7_summary.json',
 ]
 
 

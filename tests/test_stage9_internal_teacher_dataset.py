@@ -178,6 +178,19 @@ def test_internal_teacher_records_keep_unavailable_sure_strength_zero():
     assert records["external_sure_strength"][0] == 0.0
 
 
+def test_internal_teacher_records_export_empirical_direction_correctness():
+    trial_info = [
+        {"dir_choice": 0, "sure_available": True, "sensory_margin": 1.0, "sure_strength": 0.5, "ts_onset": 10, "delay_end": 15},
+        {"dir_choice": 1, "sure_available": True, "sensory_margin": 1.0, "sure_strength": 0.5, "ts_onset": 10, "delay_end": 15},
+    ]
+    outputs = np.stack([make_outputs(0.9, 0.1), make_outputs(0.8, 0.2)])
+
+    records = build_internal_teacher_records(outputs, trial_info, half_window=2)
+
+    np.testing.assert_array_equal(records["teacher_direction_choice"], [0, 0])
+    np.testing.assert_array_equal(records["teacher_correct"], [True, False])
+
+
 class FakeTask:
     def __init__(self):
         self.batch_index = 0
@@ -351,6 +364,7 @@ def main():
     test_internal_teacher_records_auto_calibrate_internal_margin_scale()
     test_internal_teacher_records_can_use_pre_go_readout_anchor()
     test_internal_teacher_records_keep_unavailable_sure_strength_zero()
+    test_internal_teacher_records_export_empirical_direction_correctness()
     test_collect_internal_teacher_dataset_concatenates_batches_and_records()
     test_save_internal_teacher_dataset_writes_expected_npz_fields()
     test_build_stage9_targets_uses_internal_sure_strength_after_go()

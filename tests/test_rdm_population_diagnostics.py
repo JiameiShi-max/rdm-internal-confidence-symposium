@@ -10,9 +10,20 @@ from rdm_population_diagnostics import (
     summarize_population_dynamics,
     summarize_pre_ts_leakage,
     summarize_repeated_stimulus_trials,
+    summarize_sure_output_dynamics,
+    softmax_action_outputs,
     write_json,
     write_repeated_trials_csv,
 )
+
+
+def test_action_softmax_excludes_fixation_channel():
+    outputs = np.asarray([[[100.0, 1.0, 2.0, 3.0]]])
+    normalized = softmax_action_outputs(outputs)
+
+    assert normalized[0, 0, 0] == 100.0
+    assert abs(float(np.sum(normalized[0, 0, 1:4])) - 1.0) < 1e-12
+    assert int(1 + np.argmax(normalized[0, 0, 1:4])) == 3
 
 
 def test_linear_r2_matches_perfect_and_null_fit():
@@ -63,6 +74,52 @@ def test_repeated_stimulus_summary_detects_stable_repeats():
     assert summary["all_repeats_same_choice_fraction"] == 0.5
     assert summary["max_output_abs_diff"] == 0.1
     assert summary["max_state_abs_diff"] == 0.2
+
+
+def test_repeated_stimulus_summary_uses_only_within_stimulus_choice_variation():
+    records = []
+    for stimulus_id, margins, choices in [
+        (0, [0.1, 0.2, 0.8, 0.9], [3, 3, 1, 1]),
+        (1, [0.2, 0.3, 0.7, 0.8], [3, 3, 2, 2]),
+    ]:
+        for repeat, (margin, choice) in enumerate(zip(margins, choices)):
+            records.append({
+                "stimulus_id": stimulus_id,
+                "repeat_index": repeat,
+                "choice": choice,
+                "chose_sure": choice == 3,
+                "sure_output": float(choice == 3),
+                "confidence": margin,
+                "pre_ts_internal_margin": margin,
+            })
+    outputs = np.zeros((8, 3, 4))
+    states = np.zeros((8, 3, 2))
+    summary = summarize_repeated_stimulus_trials(records, outputs, states)
+
+    assert summary["n_stimuli_with_choice_variability"] == 2
+    assert summary["within_stimulus_analysis_n"] == 8
+    assert summary["within_stimulus_pre_ts_margin_logit_coefficient"] < 0
+
+
+def test_sure_output_dynamics_separates_choice_and_offer_controls():
+    outputs = np.zeros((4, 12, 4))
+    outputs[0, 5:, 3] = 0.8
+    outputs[1, 5:, 3] = 0.2
+    outputs[2:, 5:, 3] = 0.1
+    trial_info = [
+        {"sure_available": True, "ts_onset": 5, "delay_end": 9},
+        {"sure_available": True, "ts_onset": 5, "delay_end": 9},
+        {"sure_available": False, "ts_onset": 5, "delay_end": 9},
+        {"sure_available": False, "ts_onset": 5, "delay_end": 9},
+    ]
+    summary, rows, plot_data = summarize_sure_output_dynamics(
+        outputs, trial_info, np.asarray([3, 1, 1, 2]), pre_window=3, post_window=3
+    )
+
+    assert len(rows) == 4
+    assert summary["post_ts_future_sure_minus_waived"] > 0
+    assert abs(summary["pre_ts_offered_minus_unoffered"]) < 1e-12
+    assert plot_data["aligned"].shape == (4, 7)
 
 
 def test_pre_ts_leakage_summary_and_writers_create_outputs():
@@ -166,9 +223,12 @@ def test_population_dynamics_summary_finds_ts_aligned_sure_separation():
 
 
 def main():
+    test_action_softmax_excludes_fixation_channel()
     test_linear_r2_matches_perfect_and_null_fit()
     test_axis_r2_includes_residual_sure_axis_after_evidence()
     test_repeated_stimulus_summary_detects_stable_repeats()
+    test_repeated_stimulus_summary_uses_only_within_stimulus_choice_variation()
+    test_sure_output_dynamics_separates_choice_and_offer_controls()
     test_pre_ts_leakage_summary_and_writers_create_outputs()
     test_axis_timecourses_project_states_onto_named_axes()
     test_population_dynamics_summary_finds_ts_aligned_sure_separation()

@@ -86,6 +86,8 @@ class RDM_SureTarget_InternalProxy_Task(Task):
         delay_min=400,
         delay_max=1000,
         ts_delay=500,
+        ts_latency_min=None,
+        ts_latency_max=None,
         min_post_ts=0,
         min_response_dur=0,
         sure_offer_prob=None,
@@ -116,6 +118,10 @@ class RDM_SureTarget_InternalProxy_Task(Task):
         self.delay_min = int(delay_min)
         self.delay_max = int(delay_max)
         self.ts_delay = int(ts_delay)
+        self.ts_latency_min = int(ts_delay if ts_latency_min is None else ts_latency_min)
+        self.ts_latency_max = int(ts_delay if ts_latency_max is None else ts_latency_max)
+        if self.ts_latency_min > self.ts_latency_max:
+            raise ValueError("ts_latency_min must be <= ts_latency_max")
         self.min_post_ts = int(min_post_ts)
         self.min_response_dur = int(min_response_dur)
         self.sure_offer_prob = None if sure_offer_prob is None else float(sure_offer_prob)
@@ -142,6 +148,14 @@ class RDM_SureTarget_InternalProxy_Task(Task):
             return min_steps * self.dt
         return np.random.randint(min_steps, max_steps) * self.dt
 
+    def sample_inclusive_duration_ms(self, min_ms, max_ms):
+        """Sample a dt-compatible duration from an inclusive millisecond range."""
+        min_steps = int(np.ceil(float(min_ms) / float(self.dt)))
+        max_steps = int(np.floor(float(max_ms) / float(self.dt)))
+        if max_steps < min_steps:
+            raise ValueError("Timing range contains no dt-compatible value")
+        return int(np.random.randint(min_steps, max_steps + 1) * self.dt)
+
     def sample_trial_timing(self):
         fixation_dur = 200
         fixation_end = int(fixation_dur / self.dt)
@@ -149,15 +163,30 @@ class RDM_SureTarget_InternalProxy_Task(Task):
         min_post_ts_steps = int(self.min_post_ts / self.dt)
         effective_delay_min = self.delay_min
         if self.sure_offer_prob is not None:
-            effective_delay_min = max(effective_delay_min, self.ts_delay + self.min_post_ts)
+            effective_delay_min = max(
+                effective_delay_min,
+                self.ts_latency_max + max(self.min_post_ts, self.dt),
+            )
+        if effective_delay_min > self.delay_max:
+            raise ValueError(
+                "Cannot sample valid trial timing: delay_max is shorter than the "
+                "maximum TS latency plus required post-TS time"
+            )
 
         for _ in range(max(1, self.max_timing_resamples)):
             stimulus_dur = self.sample_duration_ms(self.stimulus_dur_min, self.stimulus_dur_max)
             delay_dur = self.sample_duration_ms(effective_delay_min, self.delay_max)
+            ts_latency = self.sample_inclusive_duration_ms(
+                self.ts_latency_min,
+                self.ts_latency_max,
+            )
             stimulus_end = fixation_end + int(stimulus_dur / self.dt)
             delay_end = stimulus_end + int(delay_dur / self.dt)
-            ts_onset = stimulus_end + int(self.ts_delay / self.dt)
-            timing_allows_sure = ts_onset + min_post_ts_steps <= delay_end
+            ts_onset = stimulus_end + int(ts_latency / self.dt)
+            timing_allows_sure = (
+                ts_onset < delay_end
+                and ts_onset + min_post_ts_steps <= delay_end
+            )
             response_fits = delay_end <= self.N_steps - min_response_steps
             if timing_allows_sure and response_fits:
                 return {
@@ -168,6 +197,7 @@ class RDM_SureTarget_InternalProxy_Task(Task):
                     "stimulus_end": int(stimulus_end),
                     "delay_end": int(delay_end),
                     "ts_onset": int(ts_onset),
+                    "ts_latency": int(ts_latency),
                     "timing_clipped": False,
                 }
 
@@ -268,12 +298,26 @@ class RDM_SureTarget_InternalProxy_Task(Task):
             "fixation_dur": int(fixation_dur),
             "stimulus_dur": int(stimulus_dur),
             "delay_dur": int(delay_dur),
-            "ts_delay": int(self.ts_delay),
+            # ts_delay is retained as a backwards-compatible per-trial alias.
+            "ts_delay": int(timing["ts_latency"]),
+            "ts_latency_from_motion_offset": int(timing["ts_latency"]),
+            "ts_latency_min": int(self.ts_latency_min),
+            "ts_latency_max": int(self.ts_latency_max),
+            "stimulus_duration": int(stimulus_dur),
+            "delay_duration": int(delay_dur),
+            "ts_onset_ms": int(ts_onset * self.dt),
+            "motion_offset_ms": int(stimulus_end * self.dt),
+            "delay_end_ms": int(delay_end * self.dt),
+            "go_cue_ms": int(delay_end * self.dt),
+            "fixation_end_ms": int(fixation_end * self.dt),
+            "dt_ms": int(self.dt),
             "min_post_ts": int(self.min_post_ts),
             "min_response_dur": int(self.min_response_dur),
             "timing_clipped": bool(timing["timing_clipped"]),
             "sure_available": bool(sure_available),
             "sure_offer_prob": None if self.sure_offer_prob is None else float(self.sure_offer_prob),
+            "true_direction": int(dir_choice),
+            "signed_coherence": float(coh if dir_choice == 1 else -coh),
             "signed_sensory_evidence": float(signed_sensory_evidence),
             "mean_sensory_evidence": float(mean_sensory_evidence),
             "sensory_margin": float(sensory_margin),
