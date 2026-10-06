@@ -1,0 +1,60 @@
+{
+  "activation": "rectified_linear",
+  "alpha": 0.1,
+  "batch_size": 50,
+  "categorical_loss": "retained legacy masked MSE plus post-go Left/Right/Sure soft-label categorical cross-entropy",
+  "checkpoint_reload_check": {
+    "atol": 1e-07,
+    "max_abs_output_difference": 0.0,
+    "max_abs_state_difference": 0.0,
+    "n_reference_trials": 8,
+    "passed": true,
+    "rtol": 1e-07
+  },
+  "dt_ms": 10,
+  "lambda_action": 1.0,
+  "lambda_fix_postgo": 1.0,
+  "learning_rate": 0.001,
+  "loss_epoch": 1000,
+  "n_recurrent_units": 50,
+  "post_go_behavioral_readout": "mean over 10 steps; argmax of categorical Left/Right/Sure probabilities; fixation excluded",
+  "recurrent_noise": 0.05,
+  "seed": 9,
+  "split_counts": {
+    "test": 150,
+    "train": 700,
+    "validation": 150
+  },
+  "split_seed": 2026,
+  "student_action_objective": "categorical_soft",
+  "tau_ms": 100,
+  "teacher_dataset_configuration": {
+    "confidence_mapping": "empirical_margin_duration",
+    "empirical_confidence_coefficients": [
+      0.6477971635444456,
+      4.913427541959271,
+      -1.2055566867668548
+    ],
+    "internal_margin_calibration_mode": "auto_quantile",
+    "internal_margin_center_used": 0.6298540327697992,
+    "internal_margin_temp_used": 0.26712360326200724,
+    "internal_pre_go_offset_steps": 5,
+    "internal_readout_anchor": "pre_go",
+    "n_inputs": 4,
+    "n_outputs": 4,
+    "n_steps": 300,
+    "stimulus_duration_ms_range": [
+      400,
+      1190
+    ],
+    "sure_offer_probabilities": [
+      0.5
+    ],
+    "sure_reward_inferred_from_teacher_values": 0.55,
+    "ts_latency_ms_range": [
+      500,
+      750
+    ]
+  },
+  "training_iters": 50000
+}

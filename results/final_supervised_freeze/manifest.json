@@ -1,0 +1,122 @@
+{
+  "all_technical_runs_valid": true,
+  "checkpoint_paths": [
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed7/weights.npz",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed8/weights.npz",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed9/weights.npz"
+  ],
+  "checkpoint_sha256": {
+    "7": "eccc658ab2f496a729d391ca3a123bf094871461229676fad4401bfcfb22b243",
+    "8": "11dbbab7f95aff8a1c2a15a79cba6df3f60a3e0a128c29284f01411779ac5e5e",
+    "9": "294d7c3362c6a9322fd6a48225e5f2d591c0dfb47e406dd22d75d1c7871d0815"
+  },
+  "created_unix_time": 1790592608.3385222,
+  "exact_commands": [
+    "/private/tmp/rdm-model-freeze-env/bin/python scripts/run_final_supervised_freeze.py --dataset data/model_freeze/teacher_seed7.npz --output-dir results/final_supervised_freeze",
+    "/private/tmp/rdm-model-freeze-env/bin/python scripts/run_final_supervised_freeze.py --dataset data/model_freeze/teacher_seed7.npz --output-dir results/final_supervised_freeze --resume"
+  ],
+  "example_seed": 7,
+  "frozen_configuration": {
+    "activation": "rectified_linear",
+    "alpha": 0.1,
+    "batch_size": 50,
+    "categorical_loss": "retained legacy masked MSE plus post-go Left/Right/Sure soft-label categorical cross-entropy",
+    "dt_ms": 10,
+    "lambda_action": 1.0,
+    "lambda_fix_postgo": 1.0,
+    "learning_rate": 0.001,
+    "loss_epoch": 1000,
+    "n_recurrent_units": 50,
+    "post_go_behavioral_readout": "mean over 10 steps; argmax of categorical Left/Right/Sure probabilities; fixation excluded",
+    "recurrent_noise": 0.05,
+    "student_action_objective": "categorical_soft",
+    "tau_ms": 100,
+    "teacher_dataset_configuration": {
+      "confidence_mapping": "empirical_margin_duration",
+      "empirical_confidence_coefficients": [
+        0.6477971635444456,
+        4.913427541959271,
+        -1.2055566867668548
+      ],
+      "internal_margin_calibration_mode": "auto_quantile",
+      "internal_margin_center_used": 0.6298540327697992,
+      "internal_margin_temp_used": 0.26712360326200724,
+      "internal_pre_go_offset_steps": 5,
+      "internal_readout_anchor": "pre_go",
+      "n_inputs": 4,
+      "n_outputs": 4,
+      "n_steps": 300,
+      "stimulus_duration_ms_range": [
+        400,
+        1190
+      ],
+      "sure_offer_probabilities": [
+        0.5
+      ],
+      "sure_reward_inferred_from_teacher_values": 0.55,
+      "ts_latency_ms_range": [
+        500,
+        750
+      ]
+    },
+    "training_iters": 50000
+  },
+  "git_branch": "feature/model-freeze-validation",
+  "git_commit": "63f2b41c51e0f6da462625387745e421948cb8f1",
+  "git_status_at_manifest": [
+    "M src/sure_target_stage9_internal_readout.py",
+    "?? analysis/final_supervised_freeze.py",
+    "?? data/model_freeze/",
+    "?? results/final_supervised_freeze/",
+    "?? results/model_freeze/dual_head_seed7/",
+    "?? results/model_freeze/frozen_readout_diagnostic/",
+    "?? results/model_freeze/matched_seed7/",
+    "?? results/model_freeze/multiseed/",
+    "?? results/model_freeze/run_manifest.json",
+    "?? results/model_freeze/staged_output_head_experiment/",
+    "?? results/model_freeze/student_categorical_seed7/",
+    "?? results/model_freeze/student_head_calibration/",
+    "?? results/model_freeze/student_head_calibration_v2/",
+    "?? results/model_freeze/teacher_seed7/",
+    "?? results/model_freeze/teacher_seed7_legacy/",
+    "?? results/model_freeze/zero_sure_diagnostic.csv",
+    "?? results/model_freeze/zero_sure_diagnostic/",
+    "?? results/model_freeze_legacy_compat/",
+    "?? scripts/run_final_supervised_freeze.py",
+    "?? tests/test_final_supervised_freeze.py"
+  ],
+  "git_worktree_dirty": true,
+  "package_versions": {
+    "matplotlib": "3.11.2",
+    "numpy": "1.26.4",
+    "pandas": null,
+    "platform": "macOS-26.6-arm64-arm-64bit",
+    "psychrnn": "1.0.0",
+    "python": "3.12.1",
+    "scikit-learn": "1.9.1",
+    "tensorflow": "2.16.2"
+  },
+  "split_counts": {
+    "test": 150,
+    "train": 700,
+    "validation": 150
+  },
+  "split_file": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/split_indices.npz",
+  "split_file_sha256": "67d7547a3dd3d244191fbdba1d249ab1959e9be11c432d9524121ed3be77b607",
+  "split_seed": 2026,
+  "split_summary": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/split_summary.json",
+  "student_seeds": [
+    7,
+    8,
+    9
+  ],
+  "teacher_dataset_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+  "teacher_dataset_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "test_results": {
+    "command": "PYTHONPATH=src:analysis MPLCONFIGDIR=/private/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python -m pytest -q",
+    "passed": 83,
+    "failed": 0,
+    "warnings": 2
+  },
+  "final_report": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/final_report.md"
+}

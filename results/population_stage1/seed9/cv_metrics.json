@@ -1,0 +1,172 @@
+{
+  "choice": {
+    "accuracy": {
+      "mean": 0.9970370370370369,
+      "sd": 0.004057204129667903
+    },
+    "folds": [
+      {
+        "accuracy": 1.0,
+        "fold": 1,
+        "n_evaluation": 136,
+        "n_train": 540,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 1.0,
+        "fold": 2,
+        "n_evaluation": 135,
+        "n_train": 541,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 0.9925925925925926,
+        "fold": 3,
+        "n_evaluation": 135,
+        "n_train": 541,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 1.0,
+        "fold": 4,
+        "n_evaluation": 135,
+        "n_train": 541,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 0.9925925925925926,
+        "fold": 5,
+        "n_evaluation": 135,
+        "n_train": 541,
+        "roc_auc": 1.0
+      }
+    ],
+    "permutation": {
+      "n": 100,
+      "null_mean_accuracy": 0.5085800653594772,
+      "null_sd_accuracy": 0.02121900260647646,
+      "observed_mean_accuracy": 0.9970370370370369,
+      "p_one_sided": 0.009900990099009901
+    },
+    "roc_auc": {
+      "mean": 1.0,
+      "sd": 0.0
+    }
+  },
+  "confidence_empirical_p_correct": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7910777947911873,
+        "r2": 0.6216944157407133,
+        "spearman_rho": 0.8507839321248171
+      },
+      {
+        "fold": 2,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7456527256337175,
+        "r2": 0.5513451445311657,
+        "spearman_rho": 0.812853425466314
+      },
+      {
+        "fold": 3,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7233690705004279,
+        "r2": 0.5219130418876453,
+        "spearman_rho": 0.8048194878747459
+      },
+      {
+        "fold": 4,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7161390035260334,
+        "r2": 0.5127119352230176,
+        "spearman_rho": 0.7863812293630144
+      },
+      {
+        "fold": 5,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7660381520180317,
+        "r2": 0.5763139700721076,
+        "spearman_rho": 0.8256499967199493
+      }
+    ],
+    "orientation_flipped": false,
+    "pearson_r": {
+      "mean": 0.7484553492938796,
+      "sd": 0.0308518642008781
+    },
+    "r2": {
+      "mean": 0.5567957014909298,
+      "sd": 0.04410978598966504
+    },
+    "spearman_rho": {
+      "mean": 0.8160976143097681,
+      "sd": 0.024058122769227624
+    },
+    "target_name": "empirical_p_correct"
+  },
+  "confidence_internal_margin": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.9235280099737011,
+        "r2": 0.8527009085219618,
+        "spearman_rho": 0.9306553541361441
+      },
+      {
+        "fold": 2,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.8727882472776467,
+        "r2": 0.7608055322690758,
+        "spearman_rho": 0.892379348800595
+      },
+      {
+        "fold": 3,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.8961460997587745,
+        "r2": 0.8012027596006075,
+        "spearman_rho": 0.907222671710656
+      },
+      {
+        "fold": 4,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.8671889201258818,
+        "r2": 0.7518171286387741,
+        "spearman_rho": 0.8727821390304172
+      },
+      {
+        "fold": 5,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.905069938915124,
+        "r2": 0.8170175879550678,
+        "spearman_rho": 0.9192101637838667
+      }
+    ],
+    "orientation_flipped": false,
+    "pearson_r": {
+      "mean": 0.8929442432102256,
+      "sd": 0.023250010808282522
+    },
+    "r2": {
+      "mean": 0.7967087833970974,
+      "sd": 0.04144896123304026
+    },
+    "spearman_rho": {
+      "mean": 0.9044499354923359,
+      "sd": 0.022698153930926186
+    },
+    "target_name": "teacher_internal_margin"
+  }
+}

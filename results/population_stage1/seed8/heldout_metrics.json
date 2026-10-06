@@ -1,0 +1,70 @@
+{
+  "choice": {
+    "accuracy": 0.9929078014184397,
+    "mean_projection_left": -4.089169868707145,
+    "mean_projection_right": 3.4758349673628985,
+    "n_direction_choices": 141,
+    "roc_auc": 1.0
+  },
+  "confidence": {
+    "corr_internal_margin_projection_internal_margin": 0.8920172701994831,
+    "corr_projection_empirical_p_correct": 0.7485934152859051,
+    "r2_ridge_prediction_empirical_p_correct": 0.5584884196060214,
+    "spearman_projection_empirical_p_correct": 0.8088981732521445
+  },
+  "finite_deterministic_outputs_and_states": true,
+  "geometry": {
+    "choice_confidence_absolute_cosine_similarity": 0.04025919766589267,
+    "choice_confidence_angle_degrees": 92.30730568063214,
+    "choice_confidence_cosine_similarity": -0.04025919766589267
+  },
+  "n_test": 150,
+  "pca": {
+    "components_for_80_percent": 2,
+    "components_for_90_percent": 3,
+    "cumulative_variance_first_2": 0.8545734882354736,
+    "cumulative_variance_first_3": 0.981320858001709,
+    "cumulative_variance_first_5": 0.9961626529693604,
+    "explained_variance_ratio_first_10": [
+      0.621236264705658,
+      0.23333720862865448,
+      0.12674733996391296,
+      0.01217607781291008,
+      0.002665720647200942,
+      0.0017039243830367923,
+      0.0008442961843684316,
+      0.000486236356664449,
+      0.0003346045268699527,
+      0.00019361692829988897
+    ]
+  },
+  "seed": 8,
+  "wager": {
+    "bootstrap_ci95_mean_difference": [
+      -0.5155435405565058,
+      -0.37463070844911867
+    ],
+    "cohens_d_sure_minus_direction": -1.8559687943431755,
+    "direction_projection_mean": -0.03384757679560707,
+    "direction_projection_median": 0.062384009411745114,
+    "later_sure_logistic": {
+      "ci95": [
+        -11.905072307242133,
+        -2.571340269679304
+      ],
+      "coefficient": -7.238206288460718,
+      "converged": true,
+      "intercept": -4.084866818677301,
+      "standard_error": 2.3810540912150073,
+      "wald_p_two_sided": 0.0023664352627188077,
+      "wald_z": -3.0399167810451533
+    },
+    "n_later_direction": 66,
+    "n_later_sure": 9,
+    "n_sure_offered_test": 75,
+    "sure_minus_direction_mean_difference": -0.44526651009986346,
+    "sure_projection_mean": -0.4791140868954705,
+    "sure_projection_median": -0.47288029644078733
+  },
+  "zero_variance_unit_count": 0
+}

@@ -1,0 +1,104 @@
+{
+  "checkpoint_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed7/weights.npz",
+  "checkpoint_reload_check": {
+    "atol": 1e-07,
+    "max_abs_output_difference": 0.0,
+    "max_abs_state_difference": 0.0,
+    "n_reference_trials": 8,
+    "passed": true,
+    "rtol": 1e-07
+  },
+  "checkpoint_sha256": "eccc658ab2f496a729d391ca3a123bf094871461229676fad4401bfcfb22b243",
+  "choice_proportions": {
+    "left": 0.43333333333333335,
+    "right": 0.4866666666666667,
+    "sure": 0.08
+  },
+  "coherence": [
+    {
+      "coherence": 0.0,
+      "direction_accuracy": 0.6521739130434783,
+      "mean_predicted_p_sure_given_offered": 0.38944857189288506,
+      "n_direction_choices": 23,
+      "n_sure_offered": 13,
+      "n_trials": 32,
+      "p_sure_given_offered": 0.6923076923076923
+    },
+    {
+      "coherence": 0.032,
+      "direction_accuracy": 0.8947368421052632,
+      "mean_predicted_p_sure_given_offered": 0.3333581160221781,
+      "n_direction_choices": 19,
+      "n_sure_offered": 14,
+      "n_trials": 22,
+      "p_sure_given_offered": 0.21428571428571427
+    },
+    {
+      "coherence": 0.064,
+      "direction_accuracy": 0.9444444444444444,
+      "mean_predicted_p_sure_given_offered": 0.29777515202760696,
+      "n_direction_choices": 18,
+      "n_sure_offered": 10,
+      "n_trials": 18,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.128,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2523848690769889,
+      "n_direction_choices": 28,
+      "n_sure_offered": 11,
+      "n_trials": 28,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.256,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.22798576145009558,
+      "n_direction_choices": 21,
+      "n_sure_offered": 11,
+      "n_trials": 21,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.512,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.12845292289275675,
+      "n_direction_choices": 29,
+      "n_sure_offered": 16,
+      "n_trials": 29,
+      "p_sure_given_offered": 0.0
+    }
+  ],
+  "correlations_predicted_p_sure_offered": {
+    "coherence": -0.7896177424276435,
+    "empirical_p_correct": -0.6122504953096785,
+    "internal_margin": -0.8021746872378843,
+    "stimulus_duration": -0.23940033434363864,
+    "teacher_sure_strength": 0.5343201139266239
+  },
+  "example_network": true,
+  "n_recorded_training_losses": 0,
+  "n_sure_offered": 75,
+  "n_trials": 150,
+  "no_sure_direction_accuracy": 0.88,
+  "offered_direction_choice_accuracy": 0.9682539682539683,
+  "p_sure_given_offered": 0.16,
+  "psychrnn_initialization_seconds": null,
+  "psychrnn_training_seconds": null,
+  "qc": {
+    "finite_stable_network_outputs": true,
+    "nondegenerate_direction_behavior": true,
+    "nondegenerate_sure_behavior": true,
+    "p_sure_coherence_spearman": -0.8451542547285165,
+    "p_sure_generally_decreases_with_coherence": true,
+    "p_sure_negatively_related_to_empirical_p_correct": true,
+    "p_sure_negatively_related_to_internal_margin": true
+  },
+  "resumed_from_intact_partial_artifacts": true,
+  "seed": 7,
+  "technical_validity": true,
+  "training_elapsed_seconds": null,
+  "training_history_note": "The frozen loss interval produced no entries; timing metadata was unavailable after artifact finalization was resumed from the intact seed-7 checkpoint.",
+  "weights_finite": true
+}

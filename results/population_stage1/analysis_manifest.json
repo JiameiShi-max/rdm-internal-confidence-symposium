@@ -1,0 +1,88 @@
+{
+  "analysis_constants": {
+    "bootstraps": 5000,
+    "choice_C": 1.0,
+    "choice_permutations": 100,
+    "n_folds": 5,
+    "random_seed": 2027,
+    "ridge_alpha": 1.0,
+    "zero_variance_epsilon": 1e-08
+  },
+  "checkpoint_sha256_after": {
+    "7": "eccc658ab2f496a729d391ca3a123bf094871461229676fad4401bfcfb22b243",
+    "8": "11dbbab7f95aff8a1c2a15a79cba6df3f60a3e0a128c29284f01411779ac5e5e",
+    "9": "294d7c3362c6a9322fd6a48225e5f2d591c0dfb47e406dd22d75d1c7871d0815"
+  },
+  "checkpoint_sha256_before": {
+    "7": "eccc658ab2f496a729d391ca3a123bf094871461229676fad4401bfcfb22b243",
+    "8": "11dbbab7f95aff8a1c2a15a79cba6df3f60a3e0a128c29284f01411779ac5e5e",
+    "9": "294d7c3362c6a9322fd6a48225e5f2d591c0dfb47e406dd22d75d1c7871d0815"
+  },
+  "command": "/private/tmp/rdm-model-freeze-env/bin/python scripts/run_population_stage1.py --dataset data/model_freeze/teacher_seed7.npz --freeze-dir results/final_supervised_freeze --output-dir results/population_stage1",
+  "created_unix_time": 1790593559.542798,
+  "dataset_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+  "dataset_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "deterministic_replay": {
+    "alpha": 0.1,
+    "rec_noise": 0.0,
+    "simulator": "psychrnn.backend.simulation.BasicSimulator",
+    "source_inputs": "saved dataset x tensor"
+  },
+  "example_seed": 7,
+  "git_branch": "feature/model-freeze-validation",
+  "git_commit": "63f2b41c51e0f6da462625387745e421948cb8f1",
+  "hidden_state_dimensionality": 50,
+  "leakage_checks": {
+    "checkpoints_unchanged": true,
+    "choice_axis_train_only": true,
+    "confidence_axis_train_only": true,
+    "identical_definitions_all_seeds": true,
+    "network_training_called": false,
+    "pca_train_only": true,
+    "scaler_train_only": true,
+    "sure_labels_excluded_from_confidence_fit": true,
+    "test_excluded_from_all_fits": true
+  },
+  "package_versions": {
+    "matplotlib": "3.11.2",
+    "numpy": "1.26.4",
+    "psychrnn": "1.0.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.17.1"
+  },
+  "primary_window": {
+    "duration_ms": 100,
+    "event": "delay_end/go cue",
+    "start_offset_steps": -10,
+    "stop_offset_steps_exclusive": 0
+  },
+  "python": "3.12.1",
+  "replication_figure": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/multiseed/replication_summary.png",
+  "seeds": [
+    7,
+    8,
+    9
+  ],
+  "split_counts": {
+    "test": 150,
+    "train": 700,
+    "validation": 150
+  },
+  "split_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/split_indices.npz",
+  "split_sha256": "67d7547a3dd3d244191fbdba1d249ab1959e9be11c432d9524121ed3be77b607",
+  "stage2_analyses_run": [],
+  "artifact_paths": {
+    "final_report": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/final_report.md",
+    "seed7": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7",
+    "seed8": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed8",
+    "seed9": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed9",
+    "multiseed_summary_csv": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/multiseed/representation_summary.csv",
+    "multiseed_summary_json": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/multiseed/representation_summary.json"
+  },
+  "test_results": {
+    "command": "PYTHONPATH=analysis:src MPLCONFIGDIR=/private/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python -m pytest -q",
+    "passed": 88,
+    "failed": 0,
+    "warnings": 2
+  }
+}

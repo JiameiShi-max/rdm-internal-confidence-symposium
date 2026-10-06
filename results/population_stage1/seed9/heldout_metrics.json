@@ -1,0 +1,70 @@
+{
+  "choice": {
+    "accuracy": 0.9859154929577465,
+    "mean_projection_left": -3.8718679344158557,
+    "mean_projection_right": 3.759832055513088,
+    "n_direction_choices": 142,
+    "roc_auc": 1.0
+  },
+  "confidence": {
+    "corr_internal_margin_projection_internal_margin": 0.895748584935836,
+    "corr_projection_empirical_p_correct": 0.7398396965618296,
+    "r2_ridge_prediction_empirical_p_correct": 0.5456758817443645,
+    "spearman_projection_empirical_p_correct": 0.8119311969420864
+  },
+  "finite_deterministic_outputs_and_states": true,
+  "geometry": {
+    "choice_confidence_absolute_cosine_similarity": 0.08966438674966497,
+    "choice_confidence_angle_degrees": 95.14429980697533,
+    "choice_confidence_cosine_similarity": -0.08966438674966497
+  },
+  "n_test": 150,
+  "pca": {
+    "components_for_80_percent": 3,
+    "components_for_90_percent": 3,
+    "cumulative_variance_first_2": 0.7749812602996826,
+    "cumulative_variance_first_3": 0.923451840877533,
+    "cumulative_variance_first_5": 0.9820781946182251,
+    "explained_variance_ratio_first_10": [
+      0.553503155708313,
+      0.22147813439369202,
+      0.14847058057785034,
+      0.04423728212714195,
+      0.014389101415872574,
+      0.007358661852777004,
+      0.004162897821515799,
+      0.002446151338517666,
+      0.0016830232925713062,
+      0.0006594422738999128
+    ]
+  },
+  "seed": 9,
+  "wager": {
+    "bootstrap_ci95_mean_difference": [
+      -0.5903470184271914,
+      -0.44709573474423503
+    ],
+    "cohens_d_sure_minus_direction": -1.9899305662680156,
+    "direction_projection_mean": -0.043646357877941584,
+    "direction_projection_median": -0.01659299451296678,
+    "later_sure_logistic": {
+      "ci95": [
+        -18.51762823749474,
+        -2.4287592544768497
+      ],
+      "coefficient": -10.473193745985794,
+      "converged": true,
+      "intercept": -6.128935115701234,
+      "standard_error": 4.10430331199436,
+      "wald_p_two_sided": 0.010718056617587426,
+      "wald_z": -2.551759202439809
+    },
+    "n_later_direction": 67,
+    "n_later_sure": 8,
+    "n_sure_offered_test": 75,
+    "sure_minus_direction_mean_difference": -0.5198996055084764,
+    "sure_projection_mean": -0.5635459633864179,
+    "sure_projection_median": -0.5668529659958523
+  },
+  "zero_variance_unit_count": 0
+}

@@ -1,0 +1,73 @@
+{
+  "beta": -0.39120043236699725,
+  "bootstrap_ci95": [
+    -0.5716105348103457,
+    -0.2191832867567526
+  ],
+  "bootstrap_count": 2000,
+  "bootstrap_median": -0.39038929589881366,
+  "bootstrap_resampling_unit": "source stimulus",
+  "confidence_predictor_sd_before_standardization": 0.12318874523347605,
+  "converged": true,
+  "iterations": 4,
+  "log_likelihood": -1086.5837018607472,
+  "mean_within_stimulus_sd_confidence_projection": 0.10262817747049921,
+  "model": "profiled stimulus-fixed-effect logistic regression",
+  "n_repeats": 2300,
+  "n_variable_stimuli": 23,
+  "odds_ratio_per_1sd": 0.6762446011488719,
+  "operational_internal_variability_prediction_onset_ms": -300,
+  "outcome": "later Sure=1, Direction=0",
+  "overall_stochastic_p_sure": 0.1148,
+  "permutation_count": 1000,
+  "permutation_negative_tail_p": 0.000999000999000999,
+  "permutation_scheme": "Sure/Direction shuffled independently within each variable source stimulus",
+  "permutation_two_sided_p": 0.000999000999000999,
+  "predictor": "within-stimulus centered confidence projection, globally standardized over variable-stimulus repeats",
+  "specificity_model": {
+    "absolute_choice_beta": -1.8164238794840852,
+    "absolute_choice_predictor_sd_before_standardization": 0.4251776692436537,
+    "confidence_beta": 0.2313252546401025,
+    "converged": true,
+    "predictors": [
+      "within-stimulus confidence",
+      "within-stimulus absolute choice-axis projection"
+    ]
+  },
+  "temporal_familywise_negative_threshold": 0.11768724224992658,
+  "transparent_summary": {
+    "fraction_variable_stimuli_negative": 0.6956521739130435,
+    "mean_sure_minus_direction_confidence_difference": -0.04449293009847039,
+    "median_sure_minus_direction_confidence_difference": -0.041958646969474274
+  },
+  "variability_counts": {
+    "stable Direction": 52,
+    "stable Sure": 0,
+    "variable": 23
+  },
+  "variable_source_trial_ids": [
+    58,
+    73,
+    77,
+    139,
+    215,
+    257,
+    259,
+    266,
+    269,
+    291,
+    324,
+    334,
+    353,
+    369,
+    390,
+    463,
+    575,
+    608,
+    613,
+    726,
+    800,
+    910,
+    916
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "choice": {
+    "accuracy": {
+      "mean": 0.9970588235294118,
+      "sd": 0.004027371746361501
+    },
+    "folds": [
+      {
+        "accuracy": 1.0,
+        "fold": 1,
+        "n_evaluation": 136,
+        "n_train": 542,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 0.9926470588235294,
+        "fold": 2,
+        "n_evaluation": 136,
+        "n_train": 542,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 0.9926470588235294,
+        "fold": 3,
+        "n_evaluation": 136,
+        "n_train": 542,
+        "roc_auc": 0.99978369024443
+      },
+      {
+        "accuracy": 1.0,
+        "fold": 4,
+        "n_evaluation": 135,
+        "n_train": 543,
+        "roc_auc": 1.0
+      },
+      {
+        "accuracy": 1.0,
+        "fold": 5,
+        "n_evaluation": 135,
+        "n_train": 543,
+        "roc_auc": 1.0
+      }
+    ],
+    "permutation": {
+      "n": 100,
+      "null_mean_accuracy": 0.4938056644880174,
+      "null_sd_accuracy": 0.025650490631793848,
+      "observed_mean_accuracy": 0.9970588235294118,
+      "p_one_sided": 0.009900990099009901
+    },
+    "roc_auc": {
+      "mean": 0.9999567380488859,
+      "sd": 9.673666353016135e-05
+    }
+  },
+  "confidence_empirical_p_correct": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7505330855623231,
+        "r2": 0.5604420916172794,
+        "spearman_rho": 0.853211169666091
+      },
+      {
+        "fold": 2,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7677034900281228,
+        "r2": 0.5884800150840204,
+        "spearman_rho": 0.8076315847018435
+      },
+      {
+        "fold": 3,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7478737697240228,
+        "r2": 0.5585334635299881,
+        "spearman_rho": 0.7980188493582036
+      },
+      {
+        "fold": 4,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7837328518049012,
+        "r2": 0.6119166769926141,
+        "spearman_rho": 0.8263235004701407
+      },
+      {
+        "fold": 5,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.7250504054775385,
+        "r2": 0.5233055727199711,
+        "spearman_rho": 0.8152281821958848
+      }
+    ],
+    "orientation_flipped": false,
+    "pearson_r": {
+      "mean": 0.7549787205193816,
+      "sd": 0.022105812936053636
+    },
+    "r2": {
+      "mean": 0.5685355639887747,
+      "sd": 0.03350746377202545
+    },
+    "spearman_rho": {
+      "mean": 0.8200826572784328,
+      "sd": 0.021224120790612595
+    },
+    "target_name": "empirical_p_correct"
+  },
+  "confidence_internal_margin": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.9102978564522056,
+        "r2": 0.8286039118985414,
+        "spearman_rho": 0.9154402921431853
+      },
+      {
+        "fold": 2,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.8593425572489812,
+        "r2": 0.7369518862599245,
+        "spearman_rho": 0.870398635498896
+      },
+      {
+        "fold": 3,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.9072027888841654,
+        "r2": 0.8205091381902027,
+        "spearman_rho": 0.9134416478974876
+      },
+      {
+        "fold": 4,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.9064939823175057,
+        "r2": 0.8211654549530902,
+        "spearman_rho": 0.9044455620913605
+      },
+      {
+        "fold": 5,
+        "n_evaluation": 140,
+        "n_train": 560,
+        "pearson_r": 0.8870051236715115,
+        "r2": 0.7862296056069994,
+        "spearman_rho": 0.9084647175876323
+      }
+    ],
+    "orientation_flipped": false,
+    "pearson_r": {
+      "mean": 0.894068461714874,
+      "sd": 0.021482996481320175
+    },
+    "r2": {
+      "mean": 0.7986919993817516,
+      "sd": 0.038219494660478026
+    },
+    "spearman_rho": {
+      "mean": 0.9024381710437123,
+      "sd": 0.018418824446396496
+    },
+    "target_name": "teacher_internal_margin"
+  }
+}

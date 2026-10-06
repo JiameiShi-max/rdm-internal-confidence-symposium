@@ -1,0 +1,86 @@
+{
+  "choice_proportions": {
+    "left": 0.44,
+    "right": 0.5066666666666667,
+    "sure": 0.05333333333333334
+  },
+  "coherence": [
+    {
+      "coherence": 0.0,
+      "direction_accuracy": 0.7058823529411765,
+      "mean_predicted_p_sure_given_offered": 0.3548531619211038,
+      "n_direction_choices": 17,
+      "n_sure_offered": 12,
+      "n_trials": 22,
+      "p_sure_given_offered": 0.4166666666666667
+    },
+    {
+      "coherence": 0.032,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.31076376022150115,
+      "n_direction_choices": 17,
+      "n_sure_offered": 12,
+      "n_trials": 20,
+      "p_sure_given_offered": 0.25
+    },
+    {
+      "coherence": 0.064,
+      "direction_accuracy": 0.9583333333333334,
+      "mean_predicted_p_sure_given_offered": 0.27085060053146803,
+      "n_direction_choices": 24,
+      "n_sure_offered": 13,
+      "n_trials": 24,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.128,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2760117633776231,
+      "n_direction_choices": 22,
+      "n_sure_offered": 11,
+      "n_trials": 22,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.256,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.24031284055672586,
+      "n_direction_choices": 31,
+      "n_sure_offered": 16,
+      "n_trials": 31,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.512,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2075597894688447,
+      "n_direction_choices": 31,
+      "n_sure_offered": 15,
+      "n_trials": 31,
+      "p_sure_given_offered": 0.0
+    }
+  ],
+  "correlations_predicted_p_sure_offered": {
+    "coherence": -0.5589032970843828,
+    "empirical_p_correct": -0.5721043048475722,
+    "internal_margin": -0.6913551589503963,
+    "stimulus_duration": -0.22305974615837307,
+    "teacher_sure_strength": 0.4894326188209683
+  },
+  "n_sure_offered": 79,
+  "n_trials": 150,
+  "no_sure_direction_accuracy": 0.971830985915493,
+  "offered_direction_choice_accuracy": 0.9436619718309859,
+  "p_sure_given_offered": 0.10126582278481013,
+  "qc": {
+    "finite_stable_network_outputs": true,
+    "nondegenerate_direction_behavior": true,
+    "nondegenerate_sure_behavior": true,
+    "p_sure_coherence_spearman": -0.8451542547285165,
+    "p_sure_generally_decreases_with_coherence": true,
+    "p_sure_negatively_related_to_empirical_p_correct": true,
+    "p_sure_negatively_related_to_internal_margin": true
+  },
+  "role": "quality control only; not used for model or hyperparameter selection",
+  "seed": 9
+}

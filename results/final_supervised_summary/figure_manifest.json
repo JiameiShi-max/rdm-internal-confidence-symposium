@@ -1,0 +1,201 @@
+{
+  "analysis_stages_used": [
+    "final_supervised_freeze",
+    "population_stage1",
+    "population_stage2_time",
+    "population_stage3_variability"
+  ],
+  "command": "/private/tmp/rdm-model-freeze-env/bin/python scripts/run_final_supervised_summary.py --results-root results --output-dir results/final_supervised_summary",
+  "created_unix_time": 1790598269.7038798,
+  "figure_script": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/analysis/final_supervised_summary.py",
+  "git_branch": "feature/model-freeze-validation",
+  "git_commit": "63f2b41c51e0f6da462625387745e421948cb8f1",
+  "output_figures": {
+    "main_figure.pdf": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_summary/figures/main_figure.pdf",
+      "sha256": "39e6c15075a87f78ac8a910a99896e420d609bc805c1be5a28f05bd2e26d957a"
+    },
+    "main_figure.png": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_summary/figures/main_figure.png",
+      "sha256": "53cf9459a32608928acebc9abe7ac88fdb1d4a3feb7ebee46df9228510f20ba1"
+    },
+    "supplementary_figure.pdf": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_summary/figures/supplementary_figure.pdf",
+      "sha256": "faac8d74e5e3cbb33d9787fa59b5eabe30b20e4566ebff1b90155d2471f2876c"
+    },
+    "supplementary_figure.png": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_summary/figures/supplementary_figure.png",
+      "sha256": "147fa49d4ead0c6273b9b0d8a809a33d335a835d579b597b773f64f7aebdfca1"
+    }
+  },
+  "package_versions": {
+    "matplotlib": "3.11.2",
+    "numpy": "1.26.4"
+  },
+  "panel_to_source_mapping": {
+    "A_task_model_schematic": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/manifest.json",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/analysis_manifest.json"
+    ],
+    "B_behavior": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/multiseed/freeze_summary.json"
+    ],
+    "C_choice_confidence_geometry": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/pre_go_states.npz",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/state_metadata.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/multiseed/representation_summary.json"
+    ],
+    "D_time_resolved_dynamics": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/seed7/time_resolved_metrics.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/multiseed/time_replication_summary.json"
+    ],
+    "E_identical_stimulus_pairs": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/repeat_records.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/multiseed/variability_summary.json"
+    ],
+    "F_stage3_replication": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/multiseed/variability_summary.json"
+    ],
+    "supplementary": [
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/pca.npz",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/state_metadata.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/seed7/time_resolved_metrics.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/stimulus_summary.csv",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/multiseed/variability_summary.json",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/deterministic_control.json",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed8/deterministic_control.json",
+      "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed9/deterministic_control.json"
+    ]
+  },
+  "python": "3.12.1",
+  "seed_definitions": {
+    "example": 7,
+    "replication": [
+      8,
+      9
+    ],
+    "selection": "predetermined; no seed selected from results"
+  },
+  "source_artifacts": {
+    "freeze_manifest": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/manifest.json",
+      "sha256": "3d275cb67cf2f23ab288b977e3177e874667839caaa02b1143c2a4356483e0f2"
+    },
+    "freeze_report": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/final_report.md",
+      "sha256": "ad0af0a3f527b2f1e65e1d49fe6f6cbc9cd5e8e86d7f7ed7e8e661a20ab57b7e"
+    },
+    "freeze_seed7_test": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed7/test_summary.json",
+      "sha256": "6eaa1d9c676c786237a63b75f226e45af2ca1293fa5cec9ec34b6505fd55f287"
+    },
+    "freeze_seed8_test": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed8/test_summary.json",
+      "sha256": "4b71f4c7f4dca0fb396ac301aaf86ab20072a289ba2abe4a84732d7c6d87b045"
+    },
+    "freeze_seed9_test": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed9/test_summary.json",
+      "sha256": "36dbf2a6f0e2a6e8f14628dfd48629964335bbd323265a6dc563da2e4c35d8d7"
+    },
+    "freeze_summary": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/multiseed/freeze_summary.json",
+      "sha256": "00ebf7ab0da08537184aed361f3c9d5cf300c8bf4b3246e350a4d41d9439b165"
+    },
+    "stage1_manifest": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/analysis_manifest.json",
+      "sha256": "138e9ff7f9fcb158ec2ed9a875bcc401fd39885642682ca1e6c6590df3d6d23a"
+    },
+    "stage1_report": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/final_report.md",
+      "sha256": "935e6f0ff57523aed39eeeb54a26124024c425de584a6812734a8cd4cd32d1d0"
+    },
+    "stage1_seed7_metadata": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/state_metadata.csv",
+      "sha256": "16a776f2ddfd97bc7c85193189be74ba58ff76b472aecaf409e7c0f445cefa02"
+    },
+    "stage1_seed7_pca": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/pca.npz",
+      "sha256": "7e5f4d38c42f988312e29f4925340ef661bf2e3cb0cc8750e7d9cd65a725a29c"
+    },
+    "stage1_seed7_states": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/seed7/pre_go_states.npz",
+      "sha256": "177db56b56bde55c3512f4feb357543e69c736937bfef909e391b0101dedf838"
+    },
+    "stage1_summary": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage1/multiseed/representation_summary.json",
+      "sha256": "a1bb6021a5c4b0ecd885f6d72dea7b43108fc871f99c8a772239d04d41ce45a8"
+    },
+    "stage2_manifest": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/analysis_manifest.json",
+      "sha256": "3b412b48489e7dac17be83fd3e8389796461ab53eb2c2e69a693fb21cb5a48c4"
+    },
+    "stage2_report": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/final_report.md",
+      "sha256": "6e8643431c2fb87472194580160620cb03b42e3e9ad2d5e1377b613433c11969"
+    },
+    "stage2_seed7_fixed": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/seed7/fixed_axis_metrics.csv",
+      "sha256": "0b30cc7bf9a03936e37f8ddc8844483d56eace7f1ef685a36229af841f5c7def"
+    },
+    "stage2_seed7_time": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/seed7/time_resolved_metrics.csv",
+      "sha256": "1c9f2a4bc8012351027e88059c3a5d4f906aa6e67383f15470ba4bf242f3191c"
+    },
+    "stage2_summary": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage2_time/multiseed/time_replication_summary.json",
+      "sha256": "3985a33d30befecf01b8bae1db9b2c5c7e79e60fd690deea0c89a34c44fd3e25"
+    },
+    "stage3_manifest": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/analysis_manifest.json",
+      "sha256": "62370a0718791f343641cbf75a1a35ef021037ba34a3d924f8f22da24aae7823"
+    },
+    "stage3_report": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/final_report.md",
+      "sha256": "0c9b1fabe5c7d61ba71ac23deb55217da05ca2e8e58beea2bfbd30960c65f931"
+    },
+    "stage3_seed7_control": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/deterministic_control.json",
+      "sha256": "00a39ff73e8161810b56c34f823e06ebdb56b36ded3d13420b28c820ef28dd19"
+    },
+    "stage3_seed7_repeats": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/repeat_records.csv",
+      "sha256": "7ab58e34d1303b9e96169586668bf533aca9e5200b77fe88a7361cc736003acf"
+    },
+    "stage3_seed7_stimuli": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed7/stimulus_summary.csv",
+      "sha256": "792ebb9d16d75bfd4e0625d0f9f9dcb1c37453bd786667c7358d62bd5622b94b"
+    },
+    "stage3_seed8_control": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed8/deterministic_control.json",
+      "sha256": "00a39ff73e8161810b56c34f823e06ebdb56b36ded3d13420b28c820ef28dd19"
+    },
+    "stage3_seed9_control": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/seed9/deterministic_control.json",
+      "sha256": "00a39ff73e8161810b56c34f823e06ebdb56b36ded3d13420b28c820ef28dd19"
+    },
+    "stage3_summary": {
+      "path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/population_stage3_variability/multiseed/variability_summary.json",
+      "sha256": "93825024fab3e73c67af8c21d94c9d99a3bdd2d33b63bc78837fb0a161eab1ab"
+    }
+  },
+  "synthesis_constraints": {
+    "network_replay": false,
+    "network_training": false,
+    "new_axes": false,
+    "new_decoders": false,
+    "new_model_fits": false,
+    "new_scientific_analyses": false
+  },
+  "verification": {
+    "pdf_pages": {
+      "main_figure.pdf": 1,
+      "supplementary_figure.pdf": 1
+    },
+    "pdf_render_review": "passed; no clipping, overlap, or broken glyphs",
+    "test_command": "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python -m pytest -q",
+    "tests_failed": 0,
+    "tests_passed": 103,
+    "warnings": 2,
+    "warnings_summary": "unrelated protobuf Python 3.14 deprecation warnings"
+  }
+}

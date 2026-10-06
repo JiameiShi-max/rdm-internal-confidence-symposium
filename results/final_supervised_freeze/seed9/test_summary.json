@@ -1,0 +1,103 @@
+{
+  "checkpoint_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed9/weights.npz",
+  "checkpoint_reload_check": {
+    "atol": 1e-07,
+    "max_abs_output_difference": 0.0,
+    "max_abs_state_difference": 0.0,
+    "n_reference_trials": 8,
+    "passed": true,
+    "rtol": 1e-07
+  },
+  "checkpoint_sha256": "294d7c3362c6a9322fd6a48225e5f2d591c0dfb47e406dd22d75d1c7871d0815",
+  "choice_proportions": {
+    "left": 0.5066666666666667,
+    "right": 0.44,
+    "sure": 0.05333333333333334
+  },
+  "coherence": [
+    {
+      "coherence": 0.0,
+      "direction_accuracy": 0.46153846153846156,
+      "mean_predicted_p_sure_given_offered": 0.37182588118773235,
+      "n_direction_choices": 26,
+      "n_sure_offered": 13,
+      "n_trials": 32,
+      "p_sure_given_offered": 0.46153846153846156
+    },
+    {
+      "coherence": 0.032,
+      "direction_accuracy": 0.95,
+      "mean_predicted_p_sure_given_offered": 0.35401999886546814,
+      "n_direction_choices": 20,
+      "n_sure_offered": 14,
+      "n_trials": 22,
+      "p_sure_given_offered": 0.14285714285714285
+    },
+    {
+      "coherence": 0.064,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.29888129085302356,
+      "n_direction_choices": 18,
+      "n_sure_offered": 10,
+      "n_trials": 18,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.128,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2572768430818211,
+      "n_direction_choices": 28,
+      "n_sure_offered": 11,
+      "n_trials": 28,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.256,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2611670828678391,
+      "n_direction_choices": 21,
+      "n_sure_offered": 11,
+      "n_trials": 21,
+      "p_sure_given_offered": 0.0
+    },
+    {
+      "coherence": 0.512,
+      "direction_accuracy": 1.0,
+      "mean_predicted_p_sure_given_offered": 0.2094543545041233,
+      "n_direction_choices": 29,
+      "n_sure_offered": 16,
+      "n_trials": 29,
+      "p_sure_given_offered": 0.0
+    }
+  ],
+  "correlations_predicted_p_sure_offered": {
+    "coherence": -0.6786466647934797,
+    "empirical_p_correct": -0.5478937576544705,
+    "internal_margin": -0.7358403365431472,
+    "stimulus_duration": -0.11326060235316185,
+    "teacher_sure_strength": 0.45665051354567887
+  },
+  "example_network": false,
+  "n_recorded_training_losses": 0,
+  "n_sure_offered": 75,
+  "n_trials": 150,
+  "no_sure_direction_accuracy": 0.8266666666666667,
+  "offered_direction_choice_accuracy": 0.9701492537313433,
+  "p_sure_given_offered": 0.10666666666666667,
+  "psychrnn_initialization_seconds": 2.543395757675171,
+  "psychrnn_training_seconds": 18.63237237930298,
+  "qc": {
+    "finite_stable_network_outputs": true,
+    "nondegenerate_direction_behavior": true,
+    "nondegenerate_sure_behavior": true,
+    "p_sure_coherence_spearman": -0.8451542547285165,
+    "p_sure_generally_decreases_with_coherence": true,
+    "p_sure_negatively_related_to_empirical_p_correct": true,
+    "p_sure_negatively_related_to_internal_margin": true
+  },
+  "seed": 9,
+  "technical_validity": true,
+  "training_elapsed_seconds": 24.404367923736572,
+  "training_history_note": "PsychRNN records only at exact loss_epoch optimizer steps; the frozen 50,000-trial/50-batch run completes before optimizer epoch 1000.",
+  "weights_finite": true
+}

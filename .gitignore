@@ -5,3 +5,7 @@ __pycache__/
 *.out
 slurm-*.out
 stage9b_timed_teacher_dataset_50k_auto.npz
+
+# Large reproducible analysis artifacts
+results/population_stage1/seed*/state_trajectories.npz
+results/final_supervised_summary.zip

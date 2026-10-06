@@ -1,0 +1,4 @@
+seed,test_direction_accuracy,p_sure_given_offered,corr_p_sure_teacher_sure_strength,corr_p_sure_empirical_p_correct,corr_p_sure_internal_margin,corr_p_sure_coherence,corr_p_sure_stimulus_duration,checkpoint_path,technical_validity
+7,0.88,0.16,0.5343201139266239,-0.6122504953096785,-0.8021746872378843,-0.7896177424276435,-0.23940033434363864,/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed7/weights.npz,True
+8,0.84,0.09333333333333334,0.5874502077790451,-0.6558344998194362,-0.7258167334690486,-0.786942789435222,-0.2215778170697881,/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed8/weights.npz,True
+9,0.8266666666666667,0.10666666666666667,0.45665051354567887,-0.5478937576544705,-0.7358403365431472,-0.6786466647934797,-0.11326060235316185,/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed9/weights.npz,True

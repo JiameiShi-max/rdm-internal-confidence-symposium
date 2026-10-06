@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "all_timepoints_follow_trial_identity": true,
+    "train_test_overlap": 0,
+    "train_validation_overlap": 0,
+    "union_equals_all_trials": true,
+    "validation_test_overlap": 0
+  },
+  "counts": {
+    "test": 150,
+    "train": 700,
+    "validation": 150
+  },
+  "dataset_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "fractions": {
+    "test": 0.15,
+    "train": 0.7,
+    "validation": 0.15
+  },
+  "n_dataset_trials": 1000,
+  "split_seed": 2026
+}

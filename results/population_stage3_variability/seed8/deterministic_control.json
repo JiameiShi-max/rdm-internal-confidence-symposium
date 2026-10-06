@@ -1,0 +1,9 @@
+{
+  "all_exactly_repeatable": true,
+  "choice_consistency": 1.0,
+  "max_abs_output_difference": 0.0,
+  "max_abs_state_difference": 0.0,
+  "n_source_stimuli": 75,
+  "rec_noise": 0.0,
+  "repeats_per_stimulus": 10
+}

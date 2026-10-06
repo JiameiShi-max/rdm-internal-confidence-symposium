@@ -1,0 +1,111 @@
+{
+  "all_technical_runs_valid": true,
+  "example_seed": 7,
+  "individual_seed_metrics": [
+    {
+      "checkpoint_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed7/weights.npz",
+      "corr_p_sure_coherence": -0.7896177424276435,
+      "corr_p_sure_empirical_p_correct": -0.6122504953096785,
+      "corr_p_sure_internal_margin": -0.8021746872378843,
+      "corr_p_sure_stimulus_duration": -0.23940033434363864,
+      "corr_p_sure_teacher_sure_strength": 0.5343201139266239,
+      "p_sure_given_offered": 0.16,
+      "seed": 7,
+      "technical_validity": true,
+      "test_direction_accuracy": 0.88
+    },
+    {
+      "checkpoint_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed8/weights.npz",
+      "corr_p_sure_coherence": -0.786942789435222,
+      "corr_p_sure_empirical_p_correct": -0.6558344998194362,
+      "corr_p_sure_internal_margin": -0.7258167334690486,
+      "corr_p_sure_stimulus_duration": -0.2215778170697881,
+      "corr_p_sure_teacher_sure_strength": 0.5874502077790451,
+      "p_sure_given_offered": 0.09333333333333334,
+      "seed": 8,
+      "technical_validity": true,
+      "test_direction_accuracy": 0.84
+    },
+    {
+      "checkpoint_path": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/final_supervised_freeze/seed9/weights.npz",
+      "corr_p_sure_coherence": -0.6786466647934797,
+      "corr_p_sure_empirical_p_correct": -0.5478937576544705,
+      "corr_p_sure_internal_margin": -0.7358403365431472,
+      "corr_p_sure_stimulus_duration": -0.11326060235316185,
+      "corr_p_sure_teacher_sure_strength": 0.45665051354567887,
+      "p_sure_given_offered": 0.10666666666666667,
+      "seed": 9,
+      "technical_validity": true,
+      "test_direction_accuracy": 0.8266666666666667
+    }
+  ],
+  "p_sure_given_offered_by_coherence": [
+    {
+      "coherence": 0.0,
+      "individual_seeds": {
+        "7": 0.6923076923076923,
+        "8": 0.38461538461538464,
+        "9": 0.46153846153846156
+      },
+      "mean": 0.5128205128205128,
+      "sd": 0.1601281538050871
+    },
+    {
+      "coherence": 0.032,
+      "individual_seeds": {
+        "7": 0.21428571428571427,
+        "8": 0.14285714285714285,
+        "9": 0.14285714285714285
+      },
+      "mean": 0.16666666666666666,
+      "sd": 0.041239304942116126
+    },
+    {
+      "coherence": 0.064,
+      "individual_seeds": {
+        "7": 0.0,
+        "8": 0.0,
+        "9": 0.0
+      },
+      "mean": 0.0,
+      "sd": 0.0
+    },
+    {
+      "coherence": 0.128,
+      "individual_seeds": {
+        "7": 0.0,
+        "8": 0.0,
+        "9": 0.0
+      },
+      "mean": 0.0,
+      "sd": 0.0
+    },
+    {
+      "coherence": 0.256,
+      "individual_seeds": {
+        "7": 0.0,
+        "8": 0.0,
+        "9": 0.0
+      },
+      "mean": 0.0,
+      "sd": 0.0
+    },
+    {
+      "coherence": 0.512,
+      "individual_seeds": {
+        "7": 0.0,
+        "8": 0.0,
+        "9": 0.0
+      },
+      "mean": 0.0,
+      "sd": 0.0
+    }
+  ],
+  "scope_statement": "No PCA, decoding, repeated-stimulus variability, TDR, dPCA, or fixed-point analysis was run.",
+  "selection_statement": "Seeds 7, 8, and 9 were predetermined; no seed was selected or replaced based on scientific results.",
+  "student_seeds": [
+    7,
+    8,
+    9
+  ]
+}
