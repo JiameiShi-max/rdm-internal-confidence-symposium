@@ -1,0 +1,26 @@
+{
+  "model": "frozen recurrent backbone with independent fixation and action heads",
+  "backbone_checkpoint": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_head_calibration_v2/stage_a/fix_1_action_1/weights.npz",
+  "backbone_sha256": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329",
+  "teacher_dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+  "teacher_dataset_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "fixation_head_weights": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/staged_output_head_experiment/fixation_head_weights.npz",
+  "action_head_weights": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/staged_output_head_experiment/action_head_weights.npz",
+  "normalization_stored_with_each_head": true,
+  "window_steps": 10,
+  "train_trial_range": [
+    400,
+    999
+  ],
+  "validation_trials": [],
+  "test_trial_range": [
+    0,
+    399
+  ],
+  "action_order": [
+    "LEFT",
+    "RIGHT",
+    "SURE"
+  ],
+  "fixation_never_enters_action_softmax": true
+}

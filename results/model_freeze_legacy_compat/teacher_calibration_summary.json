@@ -1,0 +1,89 @@
+{
+  "dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/timed_internal_teacher_dataset_fixed_50k.npz",
+  "n_trials": 1000,
+  "n_sure_offered": 510,
+  "sure_offered_rate": 0.51,
+  "calibration_target": "teacher_direction_success_proxy",
+  "empirical_teacher_accuracy_available": false,
+  "interpretation_boundary": "Legacy artifact is incompatible with empirical calibration because teacher_correct is absent.",
+  "internal_margin_center_used": 0.7289749414194375,
+  "internal_margin_temp_used": 0.20617830552509986,
+  "internal_margin_calibration_mode": "auto_quantile",
+  "internal_margin_n_calibration_trials": 510,
+  "n_bins": 10,
+  "corr_internal_margin_p_correct_proxy": 0.9848481335923912,
+  "corr_internal_margin_expected_value": 0.9848481335923912,
+  "corr_internal_margin_sure_target_offered": -0.9430901984689848,
+  "corr_external_margin_internal_margin": 0.6795718047129167,
+  "mean_teacher_internal_margin": 0.7165762805517879,
+  "mean_p_correct_proxy": 0.5044062085170997,
+  "mean_sure_target_offered": 0.5631886934001393,
+  "coherence_summary": [
+    {
+      "coh": 0.0,
+      "n_trials": 173,
+      "n_sure_offered": 93,
+      "internal_margin_mean": 0.39658996879200203,
+      "p_correct_proxy_mean": 0.22253088609883037,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.22253088609883037,
+      "sure_target_mean_offered": 0.8188426412082851,
+      "external_sensory_margin_mean": 1.109324613101565
+    },
+    {
+      "coh": 0.032,
+      "n_trials": 151,
+      "n_sure_offered": 73,
+      "internal_margin_mean": 0.5282695665886157,
+      "p_correct_proxy_mean": 0.3242013387289208,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.3242013387289208,
+      "sure_target_mean_offered": 0.7597798598187382,
+      "external_sensory_margin_mean": 2.6705825735401634
+    },
+    {
+      "coh": 0.064,
+      "n_trials": 167,
+      "n_sure_offered": 87,
+      "internal_margin_mean": 0.6445032382358847,
+      "p_correct_proxy_mean": 0.4300092541665657,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.4300092541665657,
+      "sure_target_mean_offered": 0.6573428789235465,
+      "external_sensory_margin_mean": 4.925083688633171
+    },
+    {
+      "coh": 0.128,
+      "n_trials": 173,
+      "n_sure_offered": 85,
+      "internal_margin_mean": 0.7994982587857269,
+      "p_correct_proxy_mean": 0.5763304767985588,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.5763304767985588,
+      "sure_target_mean_offered": 0.5357914588216258,
+      "external_sensory_margin_mean": 10.343542177553122
+    },
+    {
+      "coh": 0.256,
+      "n_trials": 168,
+      "n_sure_offered": 83,
+      "internal_margin_mean": 0.8973733279320489,
+      "p_correct_proxy_mean": 0.6783024351445726,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.6783024351445726,
+      "sure_target_mean_offered": 0.3609844232082403,
+      "external_sensory_margin_mean": 22.014145039376757
+    },
+    {
+      "coh": 0.512,
+      "n_trials": 168,
+      "n_sure_offered": 89,
+      "internal_margin_mean": 1.0207949568332315,
+      "p_correct_proxy_mean": 0.7826335478433318,
+      "empirical_accuracy": null,
+      "expected_direction_value_mean": 0.7826335478433318,
+      "sure_target_mean_offered": 0.25749580497148206,
+      "external_sensory_margin_mean": 40.28441558565412
+    }
+  ]
+}

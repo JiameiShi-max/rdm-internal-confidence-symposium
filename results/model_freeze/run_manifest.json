@@ -1,0 +1,87 @@
+{
+  "seed": 7,
+  "branch": "feature/model-freeze-validation",
+  "baseline_main_commit": "32e5a2a577344b4f3c9170b5512e42a81de50796",
+  "confidence_mapping": "empirical_margin_duration",
+  "final_teacher_direction_accuracy": 0.89,
+  "mapping_selection": {
+    "source": "seed-7 legacy-margin teacher held-out comparison",
+    "margin_log_loss": 0.24362052575302925,
+    "margin_duration_log_loss": 0.24101458241558546,
+    "log_loss_improvement": 0.0026059433374437946,
+    "decision_threshold": 0.002,
+    "coefficients_intercept_margin_duration_s": [
+      0.6477971635444456,
+      4.913427541959271,
+      -1.2055566867668548
+    ]
+  },
+  "configuration": {
+    "dt_ms": 10,
+    "teacher_training_iterations": 50000,
+    "student_training_iterations": 50000,
+    "loss_epoch": 1000,
+    "batch_size": 50,
+    "recurrent_units": 50,
+    "recurrent_noise": 0.05,
+    "teacher_export_batches": 20,
+    "student_evaluation_batches": 8,
+    "stimulus_duration_ms": [400, 1200],
+    "delay_duration_ms": [800, 1200],
+    "ts_latency_from_motion_offset_ms": [500, 750],
+    "minimum_post_ts_ms": 100,
+    "minimum_response_duration_ms": 300,
+    "sure_offer_probability": 0.5,
+    "internal_readout_anchor": "pre_go",
+    "internal_pre_go_offset_steps": 5,
+    "repeated_stimuli": 48,
+    "repeats_per_stimulus": 20,
+    "deterministic_evaluation_recurrent_noise": 0.0
+  },
+  "runtime_seconds": {
+    "final_teacher_training": 23.6,
+    "final_teacher_wall": 27.42,
+    "final_student_training": 22.4,
+    "final_student_and_validation_wall": 32.69,
+    "final_training_total": 46.0,
+    "final_teacher_student_wall_total": 60.11
+  },
+  "package_versions": {
+    "python": "3.12.1",
+    "tensorflow": "2.16.2",
+    "psychrnn": "1.0.0",
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "pytest": "9.1.1"
+  },
+  "commands": [
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python -m pytest -q",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python scripts/run_timed_teacher.py --seed 7 --output data/model_freeze/teacher_seed7.npz --summary results/model_freeze/teacher_seed7/teacher_seed7_summary.json",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl /private/tmp/rdm-model-freeze-env/bin/python analysis/rdm_teacher_calibration_report.py --dataset data/model_freeze/teacher_seed7.npz --output-dir results/model_freeze/teacher_seed7 --figure-dir results/model_freeze/teacher_seed7",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python scripts/run_timed_teacher.py --seed 7 --output data/model_freeze/teacher_seed7.npz --summary results/model_freeze/teacher_seed7/teacher_seed7_summary.json --confidence-mapping empirical_margin_duration --empirical-confidence-coefficients 0.6477971635444456 4.913427541959271 -1.2055566867668548",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl /private/tmp/rdm-model-freeze-env/bin/python analysis/rdm_teacher_calibration_report.py --dataset data/model_freeze/teacher_seed7.npz --output-dir results/model_freeze/teacher_seed7 --figure-dir results/model_freeze/teacher_seed7",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl TF_CPP_MIN_LOG_LEVEL=2 /private/tmp/rdm-model-freeze-env/bin/python scripts/run_timed_student.py --dataset data/model_freeze/teacher_seed7.npz --seed 7 --summary results/model_freeze/multiseed/timed_seed7_summary.json --repeated-n-stimuli 48 --repeated-n-repeats 20",
+    "PYTHONPATH=src:analysis MPLCONFIGDIR=/tmp/mpl /private/tmp/rdm-model-freeze-env/bin/python analysis/rdm_matched_trial_controls.py --trials results/model_freeze/multiseed/timed_seed7_summary_trials.csv --output-dir results/model_freeze/matched_seed7 --figure-dir results/model_freeze/matched_seed7",
+    "PYTHONPATH=src:analysis /private/tmp/rdm-model-freeze-env/bin/python analysis/rdm_multiseed_validation.py --aggregate-only --seeds 7 --output-dir results/model_freeze/multiseed --teacher-calibration-template results/model_freeze/teacher_seed{seed}/teacher_calibration_summary.json --matched-template results/model_freeze/matched_seed{seed}/matched_trial_controls_summary.json"
+  ],
+  "multiseed_training": {
+    "run": false,
+    "reason": "The seed-7 candidate failed the single-seed gate because it made zero sure choices in the standard evaluation."
+  },
+  "key_output_paths": {
+    "teacher_dataset": "data/model_freeze/teacher_seed7.npz",
+    "teacher_summary": "results/model_freeze/teacher_seed7/teacher_seed7_summary.json",
+    "teacher_calibration": "results/model_freeze/teacher_seed7/teacher_calibration_summary.json",
+    "student_summary": "results/model_freeze/multiseed/timed_seed7_summary.json",
+    "behavior_summary": "results/model_freeze/multiseed/timed_seed7_summary_behavior.json",
+    "trial_level_behavior_csv": "results/model_freeze/multiseed/timed_seed7_summary_trials.csv",
+    "repeat_level_csv": "results/model_freeze/multiseed/timed_seed7_summary_repeated_stimulus_trials.csv",
+    "deterministic_repeat_level_csv": "results/model_freeze/multiseed/timed_seed7_summary_deterministic_repeated_stimulus_trials.csv",
+    "sure_output_trials_csv": "results/model_freeze/multiseed/timed_seed7_summary_sure_output_dynamics_trials.csv",
+    "matched_controls": "results/model_freeze/matched_seed7/matched_trial_controls_summary.json",
+    "single_seed_aggregate": "results/model_freeze/multiseed/multiseed_validation_summary.json",
+    "report": "results/model_freeze_report.md"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "n_rows": 960,
+  "n_stimuli": 48,
+  "n_repeats_per_stimulus": 20,
+  "all_repeats_same_choice_fraction": 0.1875,
+  "mean_sure_output_std_within_stimulus": 0.0400008476882173,
+  "mean_confidence_std_within_stimulus": 0.1629791229538946,
+  "max_output_abs_diff": 0.626622887630423,
+  "max_state_abs_diff": 2.834990978240967,
+  "n_stimuli_with_choice_variability": 33,
+  "within_stimulus_pre_ts_margin_logit_coefficient": -16.471759017552724,
+  "within_stimulus_pre_ts_margin_logit_se": 1.5695821146140612,
+  "within_stimulus_pre_ts_hidden_pc1_logit_coefficient": -0.7178808572433024,
+  "within_stimulus_pre_ts_hidden_pc1_logit_se": 0.12356393673303946,
+  "pre_ts_hidden_pc1_variance_fraction": 0.6670249503320451,
+  "within_stimulus_analysis_n": 660,
+  "within_stimulus_analysis": "stimulus fixed-effects logistic regression using pre-TS margin and within-stimulus hidden-state PC1"
+}

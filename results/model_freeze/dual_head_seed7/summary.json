@@ -1,0 +1,382 @@
+{
+  "success_rule_declared_before_training": {
+    "fixation_pre_go_min": 0.95,
+    "fixation_post_go_max": 0.05,
+    "fixation_auc_min": 0.99,
+    "ce_relative_improvement_over_staged_min": 0.05,
+    "kl_relative_improvement_over_staged_min": 0.1,
+    "margin_r_gain_over_staged_min": 0.05,
+    "teacher_policy_accuracy_gain_min": 0.02,
+    "incorrect_direction_tolerance": 0.0,
+    "sure_fidelity_tolerance": 0.0,
+    "direction_accuracy_tolerance": 0.01
+  },
+  "decision": {
+    "classification": "B. RECURRENT REPRESENTATION STILL LIMITED",
+    "stable": true,
+    "fixation_clean": false,
+    "broad_action_improvement": false,
+    "ce_relative_improvement_over_staged": -0.31390399370570066,
+    "kl_relative_improvement_over_staged": -0.7342172961698457,
+    "margin_r_gain_over_staged": -0.26454125053909827,
+    "teacher_policy_accuracy_gain_over_staged": -0.04749999999999999
+  },
+  "architecture": "50-unit shared ReLU recurrent backbone; one sigmoid fixation logit; independent LEFT/RIGHT/SURE softmax logits",
+  "configuration": {
+    "seed": 7,
+    "N_rec": 50,
+    "rec_noise": 0.05,
+    "dt": 10,
+    "tau": 100,
+    "alpha": 0.1,
+    "activation": "rectified_linear",
+    "batch_size": 50,
+    "training_iters": 50000,
+    "optimizer": "PsychRNN default Adam",
+    "learning_rate": 0.001,
+    "gradient_clipping": "per-gradient norm 1.0 (PsychRNN default)",
+    "training_sample_mode": "random over all 1000 frozen teacher trials",
+    "standard_evaluation_indices": [
+      0,
+      399
+    ],
+    "loss": "active-mean fixation BCE + active-mean post-go 3-way soft CE",
+    "loss_weights": {
+      "fixation": 1.0,
+      "action": 1.0
+    },
+    "regularization": {
+      "L1_in": 0.0,
+      "L1_rec": 0.0,
+      "L1_out": 0.0,
+      "L2_in": 0.0,
+      "L2_rec": 0.0,
+      "L2_out": 0.0,
+      "L2_firing_rate": 0.0
+    },
+    "teacher_dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+    "teacher_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d"
+  },
+  "training": {
+    "wall_seconds": 25.206861972808838,
+    "psychrnn_training_seconds": 19.531407117843628,
+    "psychrnn_initialization_seconds": 2.595625877380371,
+    "logged_losses": [
+      1.0324684381484985,
+      0.8934023380279541,
+      0.9304840564727783,
+      0.6425248980522156,
+      0.7180730700492859,
+      0.7452864050865173,
+      0.6915427446365356,
+      0.5139288902282715,
+      0.5689181685447693
+    ],
+    "all_losses_finite": true,
+    "final_standard_loss_components": {
+      "fixation_bce": 0.06098045691526586,
+      "action_soft_ce": 0.5938192120281218,
+      "total": 0.6547996689433877,
+      "n_fixation_active": 120000,
+      "n_action_active": 38901
+    }
+  },
+  "comparison": {
+    "initial_categorical": {
+      "fixation": {
+        "pre_go_mean": 0.8791331258906503,
+        "post_go_mean": 0.377457959229556,
+        "rmse": 0.3287293742571458,
+        "correlation": 0.8250127677482194,
+        "classification_accuracy": 0.84375,
+        "auc": 0.9829910000000001,
+        "n_samples": 8000
+      },
+      "action": {
+        "action_cross_entropy": 0.4440489664679157,
+        "action_kl": 0.20017869298534266,
+        "per_action_mae": 0.10163195693889292,
+        "action_margin_correlation": 0.6272158128923171,
+        "action_margin_sign_agreement": 0.8078817733990148,
+        "teacher_sure_favoring_fidelity": 0.6666666666666666,
+        "hard_p_sure_offered": 0.14285714285714285,
+        "incorrect_direction_probability": 0.12380290841259037,
+        "direction_decoding_accuracy": 0.9,
+        "no_sure_policy_accuracy": 0.9441624365482234,
+        "sure_vs_direction_auc": 0.8712914485165795,
+        "n_trials": 400,
+        "n_offered": 203,
+        "n_teacher_sure_favoring": 12
+      },
+      "hard_behavior": {
+        "model": "native",
+        "p_left": 0.4625,
+        "p_right": 0.465,
+        "p_sure": 0.0725,
+        "p_sure_offered": 0.14285714285714285,
+        "offered_teacher_direction_accuracy": 0.8010471204188482,
+        "no_sure_direction_accuracy": 0.9441624365482234,
+        "teacher_policy_accuracy": 0.8625
+      }
+    },
+    "staged_frozen_head": {
+      "fixation": {
+        "pre_go_mean": 0.9816858281984466,
+        "post_go_mean": 0.020107474890621112,
+        "rmse": 0.054091114057964976,
+        "correlation": 0.9945167741929183,
+        "classification_accuracy": 0.998875,
+        "auc": 1.0,
+        "n_samples": 8000
+      },
+      "action": {
+        "action_cross_entropy": 0.4260007279399629,
+        "action_kl": 0.18213045445738985,
+        "per_action_mae": 0.0832949619045412,
+        "action_margin_correlation": 0.6607775939832667,
+        "action_margin_sign_agreement": 0.8078817733990148,
+        "teacher_sure_favoring_fidelity": 0.8333333333333334,
+        "hard_p_sure_offered": 0.1625615763546798,
+        "incorrect_direction_probability": 0.10527281743867124,
+        "direction_decoding_accuracy": 0.895,
+        "no_sure_policy_accuracy": 0.9390862944162437,
+        "sure_vs_direction_auc": 0.8760907504363001,
+        "n_trials": 400,
+        "n_offered": 203,
+        "n_teacher_sure_favoring": 12
+      },
+      "hard_behavior": {
+        "model": "staged",
+        "p_left": 0.4575,
+        "p_right": 0.46,
+        "p_sure": 0.0825,
+        "p_sure_offered": 0.1625615763546798,
+        "offered_teacher_direction_accuracy": 0.806282722513089,
+        "no_sure_direction_accuracy": 0.9390862944162437,
+        "teacher_policy_accuracy": 0.87
+      }
+    },
+    "end_to_end_dual_head": {
+      "fixation": {
+        "pre_go_mean": 0.8251766777806302,
+        "post_go_mean": 0.5026130592707988,
+        "rmse": 0.44305319591491815,
+        "correlation": 0.567681122321764,
+        "classification_accuracy": 0.705,
+        "auc": 0.8390411249999999,
+        "n_samples": 8000
+      },
+      "action": {
+        "action_cross_entropy": 0.559724057761853,
+        "action_kl": 0.31585378427927985,
+        "per_action_mae": 0.14448541676917945,
+        "action_margin_correlation": 0.39623634344416847,
+        "action_margin_sign_agreement": 0.8275862068965517,
+        "teacher_sure_favoring_fidelity": 0.4166666666666667,
+        "hard_p_sure_offered": 0.0,
+        "incorrect_direction_probability": 0.18210151213903833,
+        "direction_decoding_accuracy": 0.84,
+        "no_sure_policy_accuracy": 0.8781725888324873,
+        "sure_vs_direction_auc": 0.731239092495637,
+        "n_trials": 400,
+        "n_offered": 203,
+        "n_teacher_sure_favoring": 12
+      },
+      "hard_behavior": {
+        "model": "end_to_end",
+        "p_left": 0.315,
+        "p_right": 0.685,
+        "p_sure": 0.0,
+        "p_sure_offered": 0.0,
+        "offered_teacher_direction_accuracy": 0.8167539267015707,
+        "no_sure_direction_accuracy": 0.8781725888324873,
+        "teacher_policy_accuracy": 0.8225
+      }
+    }
+  },
+  "teacher_subsets": {
+    "teacher_sure_favoring": {
+      "n": 12,
+      "target_p_sure": 0.6119802842537562,
+      "predicted_p_sure": 0.2384640720748992,
+      "predicted_p_correct": 0.4286003210138942,
+      "predicted_p_incorrect": 0.33293560691120666,
+      "predicted_margin": -0.19013624893899503,
+      "sure_over_correct": 0.4166666666666667,
+      "teacher_argmax_fidelity": 0.0
+    },
+    "teacher_direction_favoring": {
+      "n": 191,
+      "target_p_sure": 0.19092137659095346,
+      "predicted_p_sure": 0.18520157374553603,
+      "predicted_p_correct": 0.6421734017450906,
+      "predicted_p_incorrect": 0.1726250245093733,
+      "predicted_margin": -0.4569718279995547,
+      "sure_over_correct": 0.14659685863874344,
+      "teacher_argmax_fidelity": 0.8167539267015707
+    }
+  },
+  "value_distance": [
+    {
+      "bin": "strongly_direction",
+      "low": "-inf",
+      "high": -0.2,
+      "n": 162,
+      "native_disagreement": 0.1111111111111111,
+      "end_to_end_disagreement": 0.12962962962962962
+    },
+    {
+      "bin": "weakly_direction",
+      "low": -0.2,
+      "high": -0.05,
+      "n": 25,
+      "native_disagreement": 0.72,
+      "end_to_end_disagreement": 0.48
+    },
+    {
+      "bin": "near_boundary",
+      "low": -0.05,
+      "high": 0.05,
+      "n": 8,
+      "native_disagreement": 0.5,
+      "end_to_end_disagreement": 0.75
+    },
+    {
+      "bin": "weakly_sure",
+      "low": 0.05,
+      "high": 0.15,
+      "n": 6,
+      "native_disagreement": 0.5,
+      "end_to_end_disagreement": 1.0
+    },
+    {
+      "bin": "strongly_sure",
+      "low": 0.15,
+      "high": "inf",
+      "n": 2,
+      "native_disagreement": 0.5,
+      "end_to_end_disagreement": 1.0
+    }
+  ],
+  "soft_confidence_correlations": {
+    "teacher_sure_strength": 0.29076125764570193,
+    "empirical_p_correct": -0.3568358492847102,
+    "internal_margin": -0.4989082968168189,
+    "coherence": -0.6187605945249134,
+    "stimulus_duration": -0.3080956525023909
+  },
+  "coherence_accuracy": [
+    {
+      "coherence": 0.0,
+      "n": 25,
+      "end_to_end_accuracy": 0.6
+    },
+    {
+      "coherence": 0.032,
+      "n": 32,
+      "end_to_end_accuracy": 0.65625
+    },
+    {
+      "coherence": 0.064,
+      "n": 34,
+      "end_to_end_accuracy": 0.9117647058823529
+    },
+    {
+      "coherence": 0.128,
+      "n": 35,
+      "end_to_end_accuracy": 1.0
+    },
+    {
+      "coherence": 0.256,
+      "n": 31,
+      "end_to_end_accuracy": 1.0
+    },
+    {
+      "coherence": 0.512,
+      "n": 40,
+      "end_to_end_accuracy": 1.0
+    }
+  ],
+  "representation_probe": {
+    "native_dual_head": {
+      "action_cross_entropy": 0.559724057761853,
+      "action_kl": 0.31585378427927985,
+      "per_action_mae": 0.14448541676917945,
+      "action_margin_correlation": 0.39623634344416847,
+      "action_margin_sign_agreement": 0.8275862068965517,
+      "teacher_sure_favoring_fidelity": 0.4166666666666667,
+      "hard_p_sure_offered": 0.0,
+      "incorrect_direction_probability": 0.18210151213903833,
+      "direction_decoding_accuracy": 0.84,
+      "no_sure_policy_accuracy": 0.8781725888324873,
+      "sure_vs_direction_auc": 0.731239092495637,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    },
+    "held_out_linear_probe": {
+      "action_cross_entropy": 0.43107886495609726,
+      "action_kl": 0.1872085914735242,
+      "per_action_mae": 0.08328219667385257,
+      "action_margin_correlation": 0.6273327674404634,
+      "action_margin_sign_agreement": 0.8325123152709359,
+      "teacher_sure_favoring_fidelity": 0.5,
+      "hard_p_sure_offered": 0.054187192118226604,
+      "incorrect_direction_probability": 0.11971078432414455,
+      "direction_decoding_accuracy": 0.8875,
+      "no_sure_policy_accuracy": 0.9187817258883249,
+      "sure_vs_direction_auc": 0.8634380453752182,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    },
+    "ce_gap_probe_minus_native": -0.1286451928057557
+  },
+  "time_resolved_held_out": [
+    {
+      "epoch": "late_motion",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.6502793799643315,
+      "sure_vs_direction_auc": 0.9296875,
+      "direction_accuracy": 0.895
+    },
+    {
+      "epoch": "pre_ts",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.6799940370083689,
+      "sure_vs_direction_auc": 0.939453125,
+      "direction_accuracy": 0.8925
+    },
+    {
+      "epoch": "pre_go",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.6621885644299923,
+      "sure_vs_direction_auc": 0.9161783854166666,
+      "direction_accuracy": 0.8925
+    },
+    {
+      "epoch": "post_go",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.6686298482226134,
+      "sure_vs_direction_auc": 0.919921875,
+      "direction_accuracy": 0.8925
+    }
+  ],
+  "time_resolved_target_definition": "counterfactual value preference from 0.55 - empirical_P(correct), independent of actual sure-offer status",
+  "repeated_stimulus": {
+    "run": false,
+    "reason": "standard behavior did not meet success rule"
+  },
+  "artifacts": {
+    "full_checkpoint": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/weights.npz",
+    "recurrent_backbone": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/recurrent_backbone_weights.npz",
+    "fixation_head": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/fixation_head_weights.npz",
+    "action_head": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/action_head_weights.npz",
+    "configuration": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/configuration.json",
+    "training_history": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/dual_head_seed7/training_history.csv"
+  },
+  "runtime_seconds": 31.28921890258789,
+  "teacher_sha256_before": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "teacher_sha256_after": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "teacher_retrained": false
+}

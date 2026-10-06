@@ -1,0 +1,6 @@
+bin,low,high,n,native_hard_disagreement,probe_hard_disagreement,direction_fraction
+strongly_direction,-inf,-0.2,417,0.06954436450839328,0.07434052757793765,1.0
+weakly_direction,-0.2,-0.05,54,0.6296296296296297,0.7222222222222222,1.0
+near_boundary,-0.05,0.05,27,0.5555555555555556,0.6296296296296297,1.0
+weakly_sure,0.05,0.15,15,0.4,0.3333333333333333,1.0
+strongly_sure,0.15,inf,3,0.6666666666666666,0.0,1.0

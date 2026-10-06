@@ -1,0 +1,6 @@
+bin,low,high,n,hard_disagreement,mean_abs_margin_error
+strongly_direction,-inf,-0.2,162,0.10493827160493827,0.2196824179781136
+weakly_direction,-0.2,-0.05,25,0.6,0.30544839662988116
+near_boundary,-0.05,0.05,8,0.625,0.15845011769675482
+weakly_sure,0.05,0.15,6,0.3333333333333333,0.26460033094874874
+strongly_sure,0.15,inf,2,1.0,0.4826376588117688

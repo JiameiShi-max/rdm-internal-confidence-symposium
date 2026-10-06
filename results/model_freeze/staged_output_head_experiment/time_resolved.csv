@@ -1,0 +1,5 @@
+epoch,target_definition,action_margin_correlation,sure_vs_direction_auc,direction_accuracy
+late_motion,counterfactual value preference independent of sure offer,0.5484064741260334,0.8837890625,0.875
+pre_ts,counterfactual value preference independent of sure offer,0.5862251954948738,0.8922526041666666,0.895
+pre_go,counterfactual value preference independent of sure offer,0.5993299573389508,0.8792317708333333,0.9
+post_go,counterfactual value preference independent of sure offer,0.6060081395934258,0.87890625,0.895

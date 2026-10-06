@@ -1,0 +1,37 @@
+{
+  "stochastic": {
+    "n_rows": 960,
+    "n_stimuli": 48,
+    "n_repeats_per_stimulus": 20,
+    "all_repeats_same_choice_fraction": 0.3541666666666667,
+    "mean_sure_output_std_within_stimulus": 0.03772099984768351,
+    "mean_confidence_std_within_stimulus": 0.15125898006244817,
+    "max_output_abs_diff": 0.5637153081507448,
+    "max_state_abs_diff": 4.516923904418945,
+    "n_stimuli_with_choice_variability": 23,
+    "within_stimulus_pre_ts_margin_logit_coefficient": -6.576427999319566,
+    "within_stimulus_pre_ts_margin_logit_se": 0.9934965580097448,
+    "within_stimulus_pre_ts_hidden_pc1_logit_coefficient": -1.0077269146248808,
+    "within_stimulus_pre_ts_hidden_pc1_logit_se": 0.14659974208010662,
+    "pre_ts_hidden_pc1_variance_fraction": 0.6325230083959825,
+    "within_stimulus_analysis_n": 460,
+    "within_stimulus_analysis": "stimulus fixed-effects logistic regression using pre-TS margin and within-stimulus hidden-state PC1",
+    "hard_p_sure": 0.13125
+  },
+  "deterministic": {
+    "n_rows": 960,
+    "n_stimuli": 48,
+    "n_repeats_per_stimulus": 20,
+    "all_repeats_same_choice_fraction": 1.0,
+    "mean_sure_output_std_within_stimulus": 2.616541242931684e-17,
+    "mean_confidence_std_within_stimulus": 5.608939238991677e-17,
+    "max_output_abs_diff": 0.0,
+    "max_state_abs_diff": 0.0,
+    "n_stimuli_with_choice_variability": 0,
+    "within_stimulus_pre_ts_margin_logit_coefficient": NaN,
+    "within_stimulus_pre_ts_margin_logit_se": NaN,
+    "within_stimulus_analysis_n": 0,
+    "within_stimulus_analysis": "not estimable: no repeated stimulus changed sure/direction choice",
+    "hard_p_sure": 0.08333333333333333
+  }
+}

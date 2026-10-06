@@ -1,0 +1,35 @@
+{
+  "seed": 7,
+  "N_rec": 50,
+  "rec_noise": 0.05,
+  "dt": 10,
+  "tau": 100,
+  "alpha": 0.1,
+  "activation": "rectified_linear",
+  "batch_size": 50,
+  "training_iters": 50000,
+  "optimizer": "PsychRNN default Adam",
+  "learning_rate": 0.001,
+  "gradient_clipping": "per-gradient norm 1.0 (PsychRNN default)",
+  "training_sample_mode": "random over all 1000 frozen teacher trials",
+  "standard_evaluation_indices": [
+    0,
+    399
+  ],
+  "loss": "active-mean fixation BCE + active-mean post-go 3-way soft CE",
+  "loss_weights": {
+    "fixation": 1.0,
+    "action": 1.0
+  },
+  "regularization": {
+    "L1_in": 0.0,
+    "L1_rec": 0.0,
+    "L1_out": 0.0,
+    "L2_in": 0.0,
+    "L2_rec": 0.0,
+    "L2_out": 0.0,
+    "L2_firing_rate": 0.0
+  },
+  "teacher_dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+  "teacher_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d"
+}

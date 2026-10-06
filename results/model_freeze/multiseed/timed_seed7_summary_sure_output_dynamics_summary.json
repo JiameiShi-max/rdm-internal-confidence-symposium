@@ -1,0 +1,11 @@
+{
+  "n_trials": 400,
+  "n_offered": 203,
+  "mean_pre_ts_sure_output": -0.09879337391955778,
+  "pre_ts_future_sure_minus_waived": NaN,
+  "post_ts_future_sure_minus_waived": NaN,
+  "pre_ts_offered_minus_unoffered": 0.01569540106623721,
+  "pre_go_future_sure_minus_waived": NaN,
+  "post_go_future_sure_minus_waived": NaN,
+  "post_ts_half_peak_divergence_relative_step": NaN
+}

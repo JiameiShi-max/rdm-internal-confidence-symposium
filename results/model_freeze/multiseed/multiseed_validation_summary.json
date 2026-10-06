@@ -1,0 +1,253 @@
+{
+  "n_seeds": 1,
+  "pass": false,
+  "criteria": {
+    "all_required_metrics_finite": {
+      "required_metrics": [
+        "corr_sure_axis_with_sure_residual_after_evidence",
+        "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice",
+        "deterministic_repeated.all_repeats_same_choice_fraction",
+        "repeated.within_stimulus_pre_ts_margin_logit_coefficient",
+        "repeated.within_stimulus_pre_ts_hidden_pc1_logit_coefficient",
+        "sure_output.pre_ts_offered_minus_unoffered",
+        "sure_output.post_ts_future_sure_minus_waived",
+        "teacher_calibration.proxy_metrics.brier_score",
+        "teacher_calibration.proxy_metrics.log_loss",
+        "matched.waived_minus_matched_no_sure_accuracy"
+      ],
+      "missing": [
+        {
+          "seed": 7,
+          "metric": "corr_sure_axis_with_sure_residual_after_evidence"
+        },
+        {
+          "seed": 7,
+          "metric": "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice"
+        },
+        {
+          "seed": 7,
+          "metric": "sure_output.post_ts_future_sure_minus_waived"
+        }
+      ],
+      "pass": false
+    },
+    "min_residual_corr": {
+      "threshold": 0.45,
+      "observed": NaN,
+      "pass": false
+    },
+    "max_pre_ts_corr": {
+      "threshold": 0.35,
+      "observed": NaN,
+      "pass": false
+    },
+    "min_deterministic_stability": {
+      "threshold": 0.999,
+      "observed": 1.0,
+      "pass": true
+    }
+  },
+  "metrics": {
+    "n_sure_offered": {
+      "mean": 203.0,
+      "std": 0.0,
+      "min": 203.0,
+      "max": 203.0
+    },
+    "n_sure_choice": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "corr_sure_axis_with_sure_residual_after_evidence": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "r2_sure_axis_explains_residual_p_sure_after_evidence": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "corr_psure_vs_evidence_axis": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "r2_evidence_axis_explains_p_sure": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "pre_ts_leakage.pre_ts_sure_axis_mean_difference": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "pre_ts_leakage.post_ts_sure_axis_mean_difference": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "deterministic_repeated.all_repeats_same_choice_fraction": {
+      "mean": 1.0,
+      "std": 0.0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "deterministic_repeated.max_output_abs_diff": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "deterministic_repeated.max_state_abs_diff": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "behavior.overall_p_sure": {
+      "mean": 0.0,
+      "std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "behavior.no_sure_accuracy": {
+      "mean": 0.9035532994923858,
+      "std": 0.0,
+      "min": 0.9035532994923858,
+      "max": 0.9035532994923858
+    },
+    "behavior.waived_sure_accuracy": {
+      "mean": 0.8217821782178217,
+      "std": 0.0,
+      "min": 0.8217821782178217,
+      "max": 0.8217821782178217
+    },
+    "repeated.n_stimuli_with_choice_variability": {
+      "mean": 2.0,
+      "std": 0.0,
+      "min": 2.0,
+      "max": 2.0
+    },
+    "repeated.within_stimulus_pre_ts_margin_logit_coefficient": {
+      "mean": -0.5098556888783318,
+      "std": 0.0,
+      "min": -0.5098556888783318,
+      "max": -0.5098556888783318
+    },
+    "repeated.within_stimulus_pre_ts_hidden_pc1_logit_coefficient": {
+      "mean": -0.8901910788961535,
+      "std": 0.0,
+      "min": -0.8901910788961535,
+      "max": -0.8901910788961535
+    },
+    "sure_output.mean_pre_ts_sure_output": {
+      "mean": -0.09879337391955778,
+      "std": 0.0,
+      "min": -0.09879337391955778,
+      "max": -0.09879337391955778
+    },
+    "sure_output.pre_ts_offered_minus_unoffered": {
+      "mean": 0.01569540106623721,
+      "std": 0.0,
+      "min": 0.01569540106623721,
+      "max": 0.01569540106623721
+    },
+    "sure_output.post_ts_future_sure_minus_waived": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "teacher_calibration.proxy_metrics.brier_score": {
+      "mean": 0.07834981161433603,
+      "std": 0.0,
+      "min": 0.07834981161433603,
+      "max": 0.07834981161433603
+    },
+    "teacher_calibration.proxy_metrics.log_loss": {
+      "mean": 0.2502328422018647,
+      "std": 0.0,
+      "min": 0.2502328422018647,
+      "max": 0.2502328422018647
+    },
+    "teacher_calibration.calibration_slope": {
+      "mean": 1.0608221709651027,
+      "std": 0.0,
+      "min": 1.0608221709651027,
+      "max": 1.0608221709651027
+    },
+    "matched.waived_minus_matched_no_sure_accuracy": {
+      "mean": -0.011834319526627219,
+      "std": 0.0,
+      "min": -0.011834319526627219,
+      "max": -0.011834319526627219
+    },
+    "population_dynamics.sure_axis_pre_event_mean_difference": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "population_dynamics.sure_axis_post_event_mean_difference": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    },
+    "population_dynamics.sure_axis_peak_abs_difference": {
+      "mean": NaN,
+      "std": NaN,
+      "min": NaN,
+      "max": NaN
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "n_sure_offered": 203,
+      "n_sure_choice": 0,
+      "corr_sure_axis_with_sure_residual_after_evidence": NaN,
+      "r2_sure_axis_explains_residual_p_sure_after_evidence": NaN,
+      "corr_psure_vs_evidence_axis": NaN,
+      "r2_evidence_axis_explains_p_sure": NaN,
+      "pre_ts_leakage.corr_pre_ts_sure_axis_with_sure_choice": NaN,
+      "pre_ts_leakage.pre_ts_sure_axis_mean_difference": NaN,
+      "pre_ts_leakage.post_ts_sure_axis_mean_difference": NaN,
+      "deterministic_repeated.all_repeats_same_choice_fraction": 1.0,
+      "deterministic_repeated.max_output_abs_diff": 0.0,
+      "deterministic_repeated.max_state_abs_diff": 0.0,
+      "behavior.overall_p_sure": 0.0,
+      "behavior.no_sure_accuracy": 0.9035532994923858,
+      "behavior.waived_sure_accuracy": 0.8217821782178217,
+      "repeated.n_stimuli_with_choice_variability": 2,
+      "repeated.within_stimulus_pre_ts_margin_logit_coefficient": -0.5098556888783318,
+      "repeated.within_stimulus_pre_ts_hidden_pc1_logit_coefficient": -0.8901910788961535,
+      "sure_output.mean_pre_ts_sure_output": -0.09879337391955778,
+      "sure_output.pre_ts_offered_minus_unoffered": 0.01569540106623721,
+      "sure_output.post_ts_future_sure_minus_waived": NaN,
+      "teacher_calibration.proxy_metrics.brier_score": 0.07834981161433603,
+      "teacher_calibration.proxy_metrics.log_loss": 0.2502328422018647,
+      "teacher_calibration.calibration_slope": 1.0608221709651027,
+      "matched.waived_minus_matched_no_sure_accuracy": -0.011834319526627219,
+      "population_dynamics.sure_axis_pre_event_mean_difference": NaN,
+      "population_dynamics.sure_axis_post_event_mean_difference": NaN,
+      "population_dynamics.sure_axis_peak_abs_difference": NaN
+    }
+  ]
+}

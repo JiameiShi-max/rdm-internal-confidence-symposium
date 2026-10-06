@@ -1,0 +1,17 @@
+{
+  "align_event": "ts_onset",
+  "n_trials": 400,
+  "n_offered": 203,
+  "n_offered_sure_choice": 0,
+  "n_offered_direction_choice": 202,
+  "pre_window_steps": 60,
+  "post_window_steps": 40,
+  "sure_axis_pre_event_mean_difference": NaN,
+  "sure_axis_post_event_mean_difference": NaN,
+  "evidence_axis_abs_pre_event_mean_difference": NaN,
+  "evidence_axis_abs_post_event_mean_difference": NaN,
+  "time_axis_pre_event_mean_difference": NaN,
+  "time_axis_post_event_mean_difference": NaN,
+  "sure_axis_half_peak_onset_relative_step": null,
+  "sure_axis_peak_abs_difference": NaN
+}

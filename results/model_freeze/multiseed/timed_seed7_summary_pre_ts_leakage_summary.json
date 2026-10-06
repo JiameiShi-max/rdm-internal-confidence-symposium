@@ -1,0 +1,14 @@
+{
+  "n_trials": 400,
+  "n_offered": 203,
+  "n_offered_sure_choice": 0,
+  "n_offered_direction_choice": 202,
+  "pre_window_steps": 40,
+  "post_window_steps": 20,
+  "pre_ts_sure_axis_mean_sure_choice": NaN,
+  "pre_ts_sure_axis_mean_direction_choice": 0.0,
+  "pre_ts_sure_axis_mean_difference": NaN,
+  "post_ts_sure_axis_mean_difference": NaN,
+  "corr_pre_ts_sure_axis_with_sure_choice": NaN,
+  "corr_post_ts_sure_axis_with_sure_choice": NaN
+}

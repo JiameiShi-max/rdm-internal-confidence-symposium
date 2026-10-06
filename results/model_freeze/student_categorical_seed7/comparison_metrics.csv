@@ -1,0 +1,10 @@
+metric,legacy,categorical
+target_sure_favoring_fraction,0.059113300492610835,0.059113300492610835
+hard_p_sure_offered,0.0,0.1477832512315271
+target_predicted_sure_correlation,0.4509528269526545,0.5593866726566797
+no_sure_accuracy,0.9035532994923858,0.934010152284264
+waived_sure_accuracy,0.8217821782178217,0.8901734104046243
+target_predicted_action_margin_correlation_matched_repeat,0.35237303427142874,0.38748758241086606
+action_margin_sign_agreement_matched_repeat,0.7958333333333333,0.6864583333333333
+incorrect_direction_residual_repeat,0.23353733628631138,0.23633382832575672
+post_go_fixation_mean_standard,,0.37582579323789106

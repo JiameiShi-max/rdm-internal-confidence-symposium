@@ -1,0 +1,107 @@
+{
+  "legacy": {
+    "n_offered": 203,
+    "target_sure_favoring_count": 12,
+    "target_sure_favoring_fraction": 0.059113300492610835,
+    "predicted_sure_favoring_count": null,
+    "predicted_sure_favoring_fraction": null,
+    "hard_sure_count": 0,
+    "hard_p_sure_offered": 0.0,
+    "target_predicted_sure_correlation": 0.4509528269526545,
+    "target_predicted_action_margin_correlation": 0.35237303427142874,
+    "action_margin_sign_agreement": 0.7958333333333333,
+    "incorrect_direction_residual": 0.23353733628631138,
+    "post_go_fixation_mean": null,
+    "no_sure_accuracy": 0.9035532994923858,
+    "waived_sure_accuracy": 0.8217821782178217,
+    "repeat_distribution_diagnostic": {
+      "cross_entropy": 1.0022375463926672,
+      "kl_divergence": 0.4492976408867938,
+      "action_distribution_mae": 0.198789132489115
+    },
+    "repeated_stimulus": {
+      "stochastic_hard_sure_frequency": 0.0020833333333333333,
+      "n_stimuli_with_sure_direction_switching": 2,
+      "target_predicted_action_margin_correlation": 0.35237303427142874,
+      "action_margin_bias": 0.21464932250973132,
+      "action_margin_sign_agreement": 0.7958333333333333,
+      "incorrect_direction_residual": 0.23353733628631138,
+      "within_stimulus_pre_ts_margin_logit_coefficient": -0.5098556888783318,
+      "deterministic_all_repeats_same_choice_fraction": 1.0,
+      "deterministic_max_output_abs_diff": 0.0,
+      "deterministic_max_state_abs_diff": 0.0
+    }
+  },
+  "categorical": {
+    "cross_entropy": 0.4675011815057056,
+    "kl_divergence": 0.22363090802313249,
+    "action_distribution_mae": 0.10691505937974251,
+    "n_trials": 400,
+    "n_offered": 203,
+    "target_sure_favoring_count": 12,
+    "target_sure_favoring_fraction": 0.059113300492610835,
+    "predicted_sure_favoring_count": 45,
+    "predicted_sure_favoring_fraction": 0.22167487684729065,
+    "hard_sure_count": 30,
+    "hard_p_sure_offered": 0.1477832512315271,
+    "target_predicted_sure_correlation": 0.5593866726566797,
+    "target_predicted_action_margin_correlation": 0.5977745193622491,
+    "action_margin_bias": 0.14383616021492332,
+    "action_margin_sign_agreement": 0.7980295566502463,
+    "incorrect_direction_offered": 0.13258801274907628,
+    "incorrect_direction_no_sure": 0.0967027210811185,
+    "incorrect_direction_sure_favoring": 0.30476840387695964,
+    "incorrect_direction_direction_favoring": 0.12177039655256004,
+    "post_go_fixation_mean": 0.37582579323789106,
+    "post_go_fixation_mean_abs": 0.37582579323789106,
+    "p_left": 0.44,
+    "p_right": 0.485,
+    "p_sure": 0.075,
+    "sure_favoring_subset": {
+      "n": 12,
+      "mean_target_sure": 0.6119802842537562,
+      "mean_predicted_sure": 0.3711562731445701,
+      "mean_predicted_correct_direction": 0.32407532297847025,
+      "fraction_expressed_as_sure_preference": 0.6666666666666666
+    },
+    "soft_correlations_offered": {
+      "teacher_sure_strength": 0.5593866736554053,
+      "empirical_p_correct": -0.660149164887506,
+      "internal_margin": -0.8108048041295455,
+      "coherence": -0.7082511451652992,
+      "stimulus_duration_ms": -0.24637080424331764
+    },
+    "no_sure_accuracy": 0.934010152284264,
+    "waived_sure_accuracy": 0.8901734104046243,
+    "repeat_distribution": {
+      "cross_entropy": 0.9749984015162748,
+      "kl_divergence": 0.4220584960104013,
+      "action_distribution_mae": 0.20489751253578678
+    },
+    "repeated_stimulus": {
+      "stochastic_hard_sure_frequency": 0.16666666666666666,
+      "n_stimuli_with_sure_direction_switching": 33,
+      "target_predicted_action_margin_correlation": 0.38748758241086606,
+      "action_margin_bias": 0.2887513680644771,
+      "action_margin_sign_agreement": 0.6864583333333333,
+      "incorrect_direction_residual": 0.23633382832575672,
+      "within_stimulus_pre_ts_margin_logit_coefficient": -16.471759017552724,
+      "within_stimulus_pre_ts_hidden_pc1_logit_coefficient": -0.7178808572433024,
+      "deterministic_all_repeats_same_choice_fraction": 1.0,
+      "deterministic_max_output_abs_diff": 0.0,
+      "deterministic_max_state_abs_diff": 0.0
+    }
+  },
+  "comparison_scope": {
+    "standard_trials": "same first 400 sequential dataset trials; legacy lacks saved direction/fixation outputs",
+    "action_geometry": "same 48 selected offered stimuli x 20 stochastic repeats",
+    "legacy_distribution_projection": "clip independent scores at zero and renormalize only for CE/KL diagnostic"
+  },
+  "figures": [
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_categorical_seed7/figures/fig1_target_vs_predicted_actions.png",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_categorical_seed7/figures/fig2_target_vs_predicted_margin.png",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_categorical_seed7/figures/fig3_action_output_geometry.png",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_categorical_seed7/figures/fig4_p_sure_vs_coherence.png",
+    "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_categorical_seed7/figures/fig5_p_sure_vs_duration.png"
+  ]
+}

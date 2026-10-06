@@ -1,0 +1,160 @@
+{
+  "dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+  "checkpoint": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_head_calibration_v2/stage_a/fix_1_action_1/weights.npz",
+  "dataset_sha256_before": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "checkpoint_sha256_before": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329",
+  "inference": "deterministic recurrent noise=0; no model training",
+  "cross_validation": {
+    "n_folds": 5,
+    "split_unit": "trial",
+    "stratified_by": "teacher preferred LEFT/RIGHT/SURE class",
+    "all_trials_have_one_held_out_prediction": true
+  },
+  "native": {
+    "action_cross_entropy": 0.45163840107106207,
+    "action_kl": 0.20456473867208042,
+    "per_action_mae": 0.10108257167912856,
+    "action_margin_correlation": 0.6856245256408796,
+    "action_margin_sign_agreement": 0.8507751937984496,
+    "teacher_sure_favoring_fidelity": 0.6666666666666666,
+    "hard_p_sure_offered": 0.11627906976744186,
+    "incorrect_direction_probability": 0.10245243217852035,
+    "direction_decoding_accuracy": 0.91,
+    "no_sure_policy_accuracy": 0.9235537190082644,
+    "sure_vs_direction_auc": 0.8969173672650156,
+    "n_trials": 1000,
+    "n_offered": 516,
+    "n_teacher_sure_favoring": 27
+  },
+  "linear_probe": {
+    "action_cross_entropy": 0.4203720236368308,
+    "action_kl": 0.17329836123784922,
+    "per_action_mae": 0.0821339485123684,
+    "action_margin_correlation": 0.7132877582787192,
+    "action_margin_sign_agreement": 0.8255813953488372,
+    "teacher_sure_favoring_fidelity": 0.6666666666666666,
+    "hard_p_sure_offered": 0.13953488372093023,
+    "incorrect_direction_probability": 0.09165057639860347,
+    "direction_decoding_accuracy": 0.895,
+    "no_sure_policy_accuracy": 0.9152892561983471,
+    "sure_vs_direction_auc": 0.8807089297886844,
+    "n_trials": 1000,
+    "n_offered": 516,
+    "n_teacher_sure_favoring": 27
+  },
+  "readout_ceiling": {
+    "cross_entropy_relative_reduction": 0.06922878426653478,
+    "kl_relative_reduction": 0.15284343546788648,
+    "linear_probe_meets_substantial_improvement_threshold": false
+  },
+  "native_postgo_fixation": {
+    "mean": 0.37427156795060823,
+    "mean_abs": 0.37427156795060823,
+    "rms": 0.3833510983240277
+  },
+  "phase_probe": {
+    "phase_accuracy": 1.0,
+    "phase_auc": 1.0,
+    "fixation_rmse": 0.021002504558303735,
+    "fixation_correlation": 0.9991237849888444,
+    "predicted_fixation_pre_go": 0.9972467549981664,
+    "predicted_fixation_post_go": 0.002562080086845022
+  },
+  "time_resolved": [
+    {
+      "epoch": "late_motion",
+      "action_margin_correlation": 0.6962472322727111,
+      "sure_vs_direction_auc": 0.8957812618344316,
+      "direction_decoding_accuracy": 0.903
+    },
+    {
+      "epoch": "pre_ts",
+      "action_margin_correlation": 0.6917720375616766,
+      "sure_vs_direction_auc": 0.8877527834583049,
+      "direction_decoding_accuracy": 0.9
+    },
+    {
+      "epoch": "pre_go",
+      "action_margin_correlation": 0.7040259835629629,
+      "sure_vs_direction_auc": 0.8787396803756722,
+      "direction_decoding_accuracy": 0.9
+    },
+    {
+      "epoch": "post_go",
+      "action_margin_correlation": 0.7132877582787192,
+      "sure_vs_direction_auc": 0.8807089297886844,
+      "direction_decoding_accuracy": 0.895
+    }
+  ],
+  "value_distance": [
+    {
+      "bin": "strongly_direction",
+      "low": "-inf",
+      "high": -0.2,
+      "n": 417,
+      "native_hard_disagreement": 0.06954436450839328,
+      "probe_hard_disagreement": 0.07434052757793765,
+      "direction_fraction": 1.0
+    },
+    {
+      "bin": "weakly_direction",
+      "low": -0.2,
+      "high": -0.05,
+      "n": 54,
+      "native_hard_disagreement": 0.6296296296296297,
+      "probe_hard_disagreement": 0.7222222222222222,
+      "direction_fraction": 1.0
+    },
+    {
+      "bin": "near_boundary",
+      "low": -0.05,
+      "high": 0.05,
+      "n": 27,
+      "native_hard_disagreement": 0.5555555555555556,
+      "probe_hard_disagreement": 0.6296296296296297,
+      "direction_fraction": 1.0
+    },
+    {
+      "bin": "weakly_sure",
+      "low": 0.05,
+      "high": 0.15,
+      "n": 15,
+      "native_hard_disagreement": 0.4,
+      "probe_hard_disagreement": 0.3333333333333333,
+      "direction_fraction": 1.0
+    },
+    {
+      "bin": "strongly_sure",
+      "low": 0.15,
+      "high": "inf",
+      "n": 3,
+      "native_hard_disagreement": 0.6666666666666666,
+      "probe_hard_disagreement": 0.0,
+      "direction_fraction": 1.0
+    }
+  ],
+  "nonlinear_probe": {
+    "run": true,
+    "architecture": "one hidden ReLU layer, 16 units, Adam, alpha=1e-4",
+    "metrics": {
+      "action_cross_entropy": 0.4208242093653238,
+      "action_kl": 0.17375054696634215,
+      "per_action_mae": 0.08292524745656729,
+      "action_margin_correlation": 0.7097534532056112,
+      "action_margin_sign_agreement": 0.8294573643410853,
+      "teacher_sure_favoring_fidelity": 0.5925925925925926,
+      "hard_p_sure_offered": 0.12596899224806202,
+      "incorrect_direction_probability": 0.09187372434811387,
+      "direction_decoding_accuracy": 0.895,
+      "no_sure_policy_accuracy": 0.9152892561983471,
+      "sure_vs_direction_auc": 0.8751041429978035,
+      "n_trials": 1000,
+      "n_offered": 516,
+      "n_teacher_sure_favoring": 27
+    },
+    "reason": "linear probe did not meet threshold; ran the single allowed small nonlinear probe"
+  },
+  "runtime_seconds": 8.347032070159912,
+  "dataset_sha256_after": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "checkpoint_sha256_after": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329"
+}

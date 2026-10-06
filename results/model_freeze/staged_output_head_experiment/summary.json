@@ -1,0 +1,442 @@
+{
+  "decision_rule_declared_before_results": {
+    "fixation_postgo_max": 0.05,
+    "fixation_prego_min": 0.95,
+    "fixation_auc_min": 0.99,
+    "action_ce_relative_reduction_min": 0.1,
+    "action_kl_relative_reduction_min": 0.15,
+    "action_margin_r_gain_min": 0.05,
+    "direction_accuracy_tolerance": 0.005
+  },
+  "decision": {
+    "decision": "B. FIXATION SOLVED, ACTION REPRESENTATION/TRAINING STILL LIMITED",
+    "fixation_clean": true,
+    "action_material": false,
+    "action_ce_relative_reduction": 0.04064470337925408,
+    "action_kl_relative_reduction": 0.09016063727259094,
+    "action_margin_r_gain": 0.03356178109094965
+  },
+  "split": {
+    "source": "preserved standard evaluation trials 0:399",
+    "unit": "whole trial",
+    "train_indices": [
+      400,
+      999
+    ],
+    "n_train_trials": 600,
+    "validation_indices": null,
+    "n_validation_trials": 0,
+    "validation_reason": "fixed L2 and no tuning or early stopping",
+    "test_indices": [
+      0,
+      399
+    ],
+    "n_test_trials": 400,
+    "overlap_count": 0
+  },
+  "objectives": {
+    "fixation": "mean binary cross entropy plus 0.5*1e-4*||w_fix||^2",
+    "action": "mean soft-label categorical cross entropy plus 0.5*1e-4*||W_action||^2",
+    "target_weighting": "none"
+  },
+  "sample_counts": {
+    "fixation_training_samples": 12000,
+    "fixation_training_trials": 600,
+    "action_training_samples": 6000,
+    "action_training_trials": 600,
+    "fixation_test_samples": 8000,
+    "action_test_trials": 400
+  },
+  "fixation": {
+    "native": {
+      "pre_go_mean": 0.8791331258906503,
+      "post_go_mean": 0.377457959229556,
+      "rmse": 0.3287293742571458,
+      "correlation": 0.8250127677482194,
+      "classification_accuracy": 0.84375,
+      "auc": 0.9829910000000001,
+      "n_samples": 8000
+    },
+    "staged": {
+      "pre_go_mean": 0.9816858281984466,
+      "post_go_mean": 0.020107474890621112,
+      "rmse": 0.054091114057964976,
+      "correlation": 0.9945167741929183,
+      "classification_accuracy": 0.998875,
+      "auc": 1.0,
+      "n_samples": 8000
+    }
+  },
+  "action": {
+    "native": {
+      "action_cross_entropy": 0.4440489664679157,
+      "action_kl": 0.20017869298534266,
+      "per_action_mae": 0.10163195693889292,
+      "action_margin_correlation": 0.6272158128923171,
+      "action_margin_sign_agreement": 0.8078817733990148,
+      "teacher_sure_favoring_fidelity": 0.6666666666666666,
+      "hard_p_sure_offered": 0.14285714285714285,
+      "incorrect_direction_probability": 0.12380290841259037,
+      "direction_decoding_accuracy": 0.9,
+      "no_sure_policy_accuracy": 0.9441624365482234,
+      "sure_vs_direction_auc": 0.8712914485165795,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    },
+    "previous_oof_probe_on_test_subset": {
+      "action_cross_entropy": 0.41396778694524455,
+      "action_kl": 0.17009751346267152,
+      "per_action_mae": 0.08228912471768621,
+      "action_margin_correlation": 0.6530653932071301,
+      "action_margin_sign_agreement": 0.7931034482758621,
+      "teacher_sure_favoring_fidelity": 0.75,
+      "hard_p_sure_offered": 0.1625615763546798,
+      "incorrect_direction_probability": 0.11487212498540687,
+      "direction_decoding_accuracy": 0.8875,
+      "no_sure_policy_accuracy": 0.9390862944162437,
+      "sure_vs_direction_auc": 0.8651832460732984,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    },
+    "split_matched_linear_ceiling": {
+      "action_cross_entropy": 0.4265240028915,
+      "action_kl": 0.18265372940892696,
+      "per_action_mae": 0.08352988004426652,
+      "action_margin_correlation": 0.6574219048234161,
+      "action_margin_sign_agreement": 0.7980295566502463,
+      "teacher_sure_favoring_fidelity": 0.8333333333333334,
+      "hard_p_sure_offered": 0.17733990147783252,
+      "incorrect_direction_probability": 0.10446887196267564,
+      "direction_decoding_accuracy": 0.895,
+      "no_sure_policy_accuracy": 0.9390862944162437,
+      "sure_vs_direction_auc": 0.8795811518324608,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    },
+    "staged": {
+      "action_cross_entropy": 0.4260007279399629,
+      "action_kl": 0.18213045445738985,
+      "per_action_mae": 0.0832949619045412,
+      "action_margin_correlation": 0.6607775939832667,
+      "action_margin_sign_agreement": 0.8078817733990148,
+      "teacher_sure_favoring_fidelity": 0.8333333333333334,
+      "hard_p_sure_offered": 0.1625615763546798,
+      "incorrect_direction_probability": 0.10527281743867124,
+      "direction_decoding_accuracy": 0.895,
+      "no_sure_policy_accuracy": 0.9390862944162437,
+      "sure_vs_direction_auc": 0.8760907504363001,
+      "n_trials": 400,
+      "n_offered": 203,
+      "n_teacher_sure_favoring": 12
+    }
+  },
+  "subsets": {
+    "native": {
+      "teacher_sure_favoring": {
+        "n": 12,
+        "target_p_sure": 0.6119802842537562,
+        "predicted_p_sure": 0.36834398563253806,
+        "predicted_p_correct": 0.31835659223817786,
+        "predicted_p_incorrect": 0.31329942212928413,
+        "predicted_margin": 0.04998739339436015,
+        "sure_over_correct": 0.6666666666666666,
+        "teacher_argmax_fidelity": 0.5
+      },
+      "teacher_direction_favoring": {
+        "n": 191,
+        "target_p_sure": 0.19092137659095346,
+        "predicted_p_sure": 0.20983177097176864,
+        "predicted_p_correct": 0.6782708607444384,
+        "predicted_p_incorrect": 0.11189736828379288,
+        "predicted_margin": -0.46843908977266985,
+        "sure_over_correct": 0.18324607329842932,
+        "teacher_argmax_fidelity": 0.8010471204188482
+      }
+    },
+    "previous_oof_probe": {
+      "teacher_sure_favoring": {
+        "n": 12,
+        "target_p_sure": 0.6119802842537562,
+        "predicted_p_sure": 0.37717182589335446,
+        "predicted_p_correct": 0.32212148344403585,
+        "predicted_p_incorrect": 0.30070669066260963,
+        "predicted_margin": 0.05505034244931861,
+        "sure_over_correct": 0.75,
+        "teacher_argmax_fidelity": 0.6666666666666666
+      },
+      "teacher_direction_favoring": {
+        "n": 191,
+        "target_p_sure": 0.19092137659095346,
+        "predicted_p_sure": 0.21452855613537333,
+        "predicted_p_correct": 0.6822747889741225,
+        "predicted_p_incorrect": 0.1031966548905041,
+        "predicted_margin": -0.46774623283874933,
+        "sure_over_correct": 0.20418848167539266,
+        "teacher_argmax_fidelity": 0.7958115183246073
+      }
+    },
+    "split_matched_ceiling": {
+      "teacher_sure_favoring": {
+        "n": 12,
+        "target_p_sure": 0.6119802842537562,
+        "predicted_p_sure": 0.40865693983739465,
+        "predicted_p_correct": 0.3093970881151013,
+        "predicted_p_incorrect": 0.2819459720475041,
+        "predicted_margin": 0.09925985172229335,
+        "sure_over_correct": 0.8333333333333334,
+        "teacher_argmax_fidelity": 0.75
+      },
+      "teacher_direction_favoring": {
+        "n": 191,
+        "target_p_sure": 0.19092137659095346,
+        "predicted_p_sure": 0.22045788202331565,
+        "predicted_p_correct": 0.6862236397366157,
+        "predicted_p_incorrect": 0.09331847824006864,
+        "predicted_margin": -0.4657657577133001,
+        "sure_over_correct": 0.20418848167539266,
+        "teacher_argmax_fidelity": 0.7958115183246073
+      }
+    },
+    "staged": {
+      "teacher_sure_favoring": {
+        "n": 12,
+        "target_p_sure": 0.6119802842537562,
+        "predicted_p_sure": 0.40521516479616077,
+        "predicted_p_correct": 0.31352588350322785,
+        "predicted_p_incorrect": 0.28125895170061144,
+        "predicted_margin": 0.0916892812929328,
+        "sure_over_correct": 0.8333333333333334,
+        "teacher_argmax_fidelity": 0.75
+      },
+      "teacher_direction_favoring": {
+        "n": 191,
+        "target_p_sure": 0.19092137659095346,
+        "predicted_p_sure": 0.2181843712994101,
+        "predicted_p_correct": 0.6875995317391086,
+        "predicted_p_incorrect": 0.09421609696148128,
+        "predicted_margin": -0.46941516043969855,
+        "sure_over_correct": 0.193717277486911,
+        "teacher_argmax_fidelity": 0.806282722513089
+      }
+    }
+  },
+  "hard_behavior": [
+    {
+      "model": "native",
+      "p_left": 0.4625,
+      "p_right": 0.465,
+      "p_sure": 0.0725,
+      "p_sure_offered": 0.14285714285714285,
+      "offered_teacher_direction_accuracy": 0.8010471204188482,
+      "no_sure_direction_accuracy": 0.9441624365482234,
+      "teacher_policy_accuracy": 0.8625
+    },
+    {
+      "model": "ceiling",
+      "p_left": 0.45,
+      "p_right": 0.46,
+      "p_sure": 0.09,
+      "p_sure_offered": 0.17733990147783252,
+      "offered_teacher_direction_accuracy": 0.7958115183246073,
+      "no_sure_direction_accuracy": 0.9390862944162437,
+      "teacher_policy_accuracy": 0.865
+    },
+    {
+      "model": "staged",
+      "p_left": 0.4575,
+      "p_right": 0.46,
+      "p_sure": 0.0825,
+      "p_sure_offered": 0.1625615763546798,
+      "offered_teacher_direction_accuracy": 0.806282722513089,
+      "no_sure_direction_accuracy": 0.9390862944162437,
+      "teacher_policy_accuracy": 0.87
+    }
+  ],
+  "coherence_accuracy": [
+    {
+      "coherence": 0.0,
+      "n": 25,
+      "native_accuracy": 0.56,
+      "ceiling_accuracy": 0.52,
+      "staged_accuracy": 0.52
+    },
+    {
+      "coherence": 0.032,
+      "n": 32,
+      "native_accuracy": 1.0,
+      "ceiling_accuracy": 1.0,
+      "staged_accuracy": 1.0
+    },
+    {
+      "coherence": 0.064,
+      "n": 34,
+      "native_accuracy": 1.0,
+      "ceiling_accuracy": 1.0,
+      "staged_accuracy": 1.0
+    },
+    {
+      "coherence": 0.128,
+      "n": 35,
+      "native_accuracy": 1.0,
+      "ceiling_accuracy": 1.0,
+      "staged_accuracy": 1.0
+    },
+    {
+      "coherence": 0.256,
+      "n": 31,
+      "native_accuracy": 1.0,
+      "ceiling_accuracy": 1.0,
+      "staged_accuracy": 1.0
+    },
+    {
+      "coherence": 0.512,
+      "n": 40,
+      "native_accuracy": 1.0,
+      "ceiling_accuracy": 1.0,
+      "staged_accuracy": 1.0
+    }
+  ],
+  "value_distance": [
+    {
+      "bin": "strongly_direction",
+      "low": "-inf",
+      "high": -0.2,
+      "n": 162,
+      "native_disagreement": 0.1111111111111111,
+      "staged_disagreement": 0.10493827160493827
+    },
+    {
+      "bin": "weakly_direction",
+      "low": -0.2,
+      "high": -0.05,
+      "n": 25,
+      "native_disagreement": 0.72,
+      "staged_disagreement": 0.72
+    },
+    {
+      "bin": "near_boundary",
+      "low": -0.05,
+      "high": 0.05,
+      "n": 8,
+      "native_disagreement": 0.5,
+      "staged_disagreement": 0.5
+    },
+    {
+      "bin": "weakly_sure",
+      "low": 0.05,
+      "high": 0.15,
+      "n": 6,
+      "native_disagreement": 0.5,
+      "staged_disagreement": 0.16666666666666666
+    },
+    {
+      "bin": "strongly_sure",
+      "low": 0.15,
+      "high": "inf",
+      "n": 2,
+      "native_disagreement": 0.5,
+      "staged_disagreement": 0.0
+    }
+  ],
+  "soft_confidence_correlations": {
+    "native": {
+      "teacher_sure_strength": 0.5875143148257432,
+      "empirical_p_correct": -0.6899657933693805,
+      "internal_margin": -0.8293058870875496,
+      "coherence": -0.7258141876085444,
+      "stimulus_duration": -0.2568638244700283
+    },
+    "previous_oof_probe": {
+      "teacher_sure_strength": 0.671553644384593,
+      "empirical_p_correct": -0.7511598224905293,
+      "internal_margin": -0.7265847632891467,
+      "coherence": -0.6365400745793757,
+      "stimulus_duration": -0.13225095608279164
+    },
+    "split_matched_ceiling": {
+      "teacher_sure_strength": 0.6734485175190233,
+      "empirical_p_correct": -0.7487109670999368,
+      "internal_margin": -0.7207187882138935,
+      "coherence": -0.6305674192186163,
+      "stimulus_duration": -0.13017604869495283
+    },
+    "staged": {
+      "teacher_sure_strength": 0.6836663586269329,
+      "empirical_p_correct": -0.7571407354531459,
+      "internal_margin": -0.7264071147327541,
+      "coherence": -0.6290593924323558,
+      "stimulus_duration": -0.14621668687773892
+    }
+  },
+  "time_resolved": [
+    {
+      "epoch": "late_motion",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.5484064741260334,
+      "sure_vs_direction_auc": 0.8837890625,
+      "direction_accuracy": 0.875
+    },
+    {
+      "epoch": "pre_ts",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.5862251954948738,
+      "sure_vs_direction_auc": 0.8922526041666666,
+      "direction_accuracy": 0.895
+    },
+    {
+      "epoch": "pre_go",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.5993299573389508,
+      "sure_vs_direction_auc": 0.8792317708333333,
+      "direction_accuracy": 0.9
+    },
+    {
+      "epoch": "post_go",
+      "target_definition": "counterfactual value preference independent of sure offer",
+      "action_margin_correlation": 0.6060081395934258,
+      "sure_vs_direction_auc": 0.87890625,
+      "direction_accuracy": 0.895
+    }
+  ],
+  "time_resolved_target_definition": "counterfactual sure preference computed from 0.55 - empirical_P(correct), then the unchanged sigmoid/blend/clip mapping; independent of offer status",
+  "artifacts": {
+    "model": "frozen recurrent backbone with independent fixation and action heads",
+    "backbone_checkpoint": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/student_head_calibration_v2/stage_a/fix_1_action_1/weights.npz",
+    "backbone_sha256": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329",
+    "teacher_dataset": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/data/model_freeze/teacher_seed7.npz",
+    "teacher_dataset_sha256": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+    "fixation_head_weights": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/staged_output_head_experiment/fixation_head_weights.npz",
+    "action_head_weights": "/Users/connie/Documents/GitHub/rdm-internal-confidence-symposium/results/model_freeze/staged_output_head_experiment/action_head_weights.npz",
+    "normalization_stored_with_each_head": true,
+    "window_steps": 10,
+    "train_trial_range": [
+      400,
+      999
+    ],
+    "validation_trials": [],
+    "test_trial_range": [
+      0,
+      399
+    ],
+    "action_order": [
+      "LEFT",
+      "RIGHT",
+      "SURE"
+    ],
+    "fixation_never_enters_action_softmax": true
+  },
+  "reconstruction": {
+    "fixation_max_abs_difference": 0.0,
+    "action_max_abs_difference": 0.0
+  },
+  "runtime_seconds": 9.246363878250122,
+  "backbone_sha256_before": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329",
+  "backbone_sha256_after": "bab443333a2b962a10bee9ed675e13216eb352ca76114f5052a2db133b5a1329",
+  "teacher_dataset_sha256_before": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "teacher_dataset_sha256_after": "8ab578794710ab3fd142107f1ad2d14172742e149525ac894c8305b68fbcf94d",
+  "teacher_retrained": false,
+  "recurrent_backbone_retrained_or_modified": false
+}

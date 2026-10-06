@@ -1,0 +1,15 @@
+{
+  "n_rows": 960,
+  "n_stimuli": 48,
+  "n_repeats_per_stimulus": 20,
+  "all_repeats_same_choice_fraction": 1.0,
+  "mean_sure_output_std_within_stimulus": 3.122502256758253e-17,
+  "mean_confidence_std_within_stimulus": 6.129356281784719e-17,
+  "max_output_abs_diff": 0.0,
+  "max_state_abs_diff": 0.0,
+  "n_stimuli_with_choice_variability": 0,
+  "within_stimulus_pre_ts_margin_logit_coefficient": NaN,
+  "within_stimulus_pre_ts_margin_logit_se": NaN,
+  "within_stimulus_analysis_n": 0,
+  "within_stimulus_analysis": "not estimable: no repeated stimulus changed sure/direction choice"
+}
