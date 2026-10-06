@@ -69,6 +69,17 @@ def load_stage9_dataset(dataset_path):
         "teacher_correct",
         "external_sensory_margin",
         "external_sure_strength",
+        "confidence_mapping",
+        "empirical_confidence_coefficients",
+        "internal_margin_center_used",
+        "internal_margin_temp_used",
+        "internal_margin_calibration_mode",
+        "internal_margin_center_quantile",
+        "internal_margin_temp_low_quantile",
+        "internal_margin_temp_high_quantile",
+        "internal_margin_n_calibration_trials",
+        "internal_readout_anchor",
+        "internal_pre_go_offset_steps",
     ]
     for field in optional_fields:
         if field in data.files:
@@ -85,7 +96,16 @@ class RDM_SureTarget_InternalReadoutDatasetTask:
     pre-TS output confidence readout.
     """
 
-    def __init__(self, dataset_path, dt=10, tau=100, N_batch=50, sample_mode="random", seed=7):
+    def __init__(
+        self,
+        dataset_path,
+        dt=10,
+        tau=100,
+        N_batch=50,
+        sample_mode="random",
+        seed=7,
+        allowed_indices=None,
+    ):
         from psychrnn.tasks.task import Task
 
         dataset = load_stage9_dataset(dataset_path)
@@ -95,6 +115,18 @@ class RDM_SureTarget_InternalReadoutDatasetTask:
         self.y_data = dataset["y_internal"]
         self.mask_data = dataset["mask_internal"]
         self.source_trial_info = dataset["trial_info"]
+        n_trials = int(self.x_data.shape[0])
+        if allowed_indices is None:
+            allowed_indices = np.arange(n_trials, dtype=np.int64)
+        else:
+            allowed_indices = np.asarray(allowed_indices, dtype=np.int64)
+            if allowed_indices.ndim != 1 or allowed_indices.size == 0:
+                raise ValueError("allowed_indices must be a non-empty one-dimensional array")
+            if np.any(allowed_indices < 0) or np.any(allowed_indices >= n_trials):
+                raise ValueError("allowed_indices contains an out-of-range dataset index")
+            if np.unique(allowed_indices).size != allowed_indices.size:
+                raise ValueError("allowed_indices must not contain duplicates")
+        self.allowed_indices = allowed_indices.copy()
         self.sample_mode = str(sample_mode)
         self.rng = np.random.RandomState(int(seed))
         self.next_index = 0
@@ -138,10 +170,12 @@ class RDM_SureTarget_InternalReadoutDatasetTask:
 
     def generate_trial_params(self, batch, trial):
         if self.sample_mode == "sequential":
-            dataset_index = int(self.next_index % self.x_data.shape[0])
+            allowed_position = int(self.next_index % self.allowed_indices.size)
+            dataset_index = int(self.allowed_indices[allowed_position])
             self.next_index += 1
         elif self.sample_mode == "random":
-            dataset_index = int(self.rng.randint(0, self.x_data.shape[0]))
+            allowed_position = int(self.rng.randint(0, self.allowed_indices.size))
+            dataset_index = int(self.allowed_indices[allowed_position])
         else:
             raise ValueError(f"Unknown sample_mode: {self.sample_mode}")
         return {"dataset_index": dataset_index}
